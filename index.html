@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Empty Chair</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+ <!-- Background Video -->
+    <div class="bg-video">
+  <video autoplay muted loop playsinline>
+    <source src="videos/ballet.mp4" type="video/mp4">
+  </video>
+</div>
+
+    <!-- Opening Door -->
+<div class="opening-door" id="openingDoor">
+  <div class="opening-content">
+    <h1 class="opening-title">The Empty Chair</h1>
+    <p class="opening-subtitle">A film about grief</p>
+    <p class="opening-prompt">click anywhere to enter →</p>
+  </div>
+</div>
+
+<!-- Top UI -->
+<div class="film-ui" aria-hidden="true">
+  <div class="film-logo">THE EMPTY CHAIR</div>
+  <div class="timecode" id="timecode">00:00:00:00</div>
+</div>
+
+<!-- Shot List (numbers only) -->
+<div class="shotlist" id="shotlist" aria-label="Shot list">
+  <div class="shotlist-label">SHOT</div>
+  <div class="shotlist-nums" id="shotNums"></div>
+</div>
+
+<!-- Shots (fade stack) -->
+<div class="shots" id="shots">
+
+  <!-- 01 -->
+  <section class="shot active" data-shot="1" data-light="soft" data-time="00:00:00:00">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: WIDE</div>
+      <div class="shot-info-line">LENS: 35MM</div>
+      <div class="shot-info-line">INT. MEMORY</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="chair-wrap">
+      <img class="chair-image" src="https://i.imgur.com/placeholder-chair-1.png" alt="">
+    </div>
+
+    <div class="shot-text">
+  <h2 class="shot-title">I Mourn the Loss of Us</h2>
+  <p class="shot-body">
+    Sometimes I mourn the loss of us. I grieve for the story we never got to tell. Not because death robbed us of time, but because I was afraid of what we might become and burned the pages myself. Turns out grief is the sweetest when it mourns something that never existed. Because when I allow myself to feel this pain for all we never had…I learn that love doesn’t have to end with happily ever after to be valid.
+  </p>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="shot" data-shot="2" data-light="window" data-time="00:00:02:20">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: CLOSE</div>
+      <div class="shot-info-line">LENS: 50MM</div>
+      <div class="shot-info-line">INT. FEAR</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="chair-wrap">
+      <img class="chair-image" src="https://i.imgur.com/placeholder-chair-2.png" alt="">
+    </div>
+
+    <div class="shot-text">
+  <h2 class="shot-title">Finding Proof in Missing You</h2>
+  <p class="shot-body">
+    When I miss you, I know you mattered. What I’m learning to hold onto when I’m missing you isn’t grief—it’s proof. Proof that yes, I could feel this way about someone. Yes, I was capable of caring that much. Yes, my heart can expand wide enough to feel that kind of empty.
+  </p>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="shot" data-shot="3" data-light="dim" data-time="00:00:05:16">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: MEDIUM</div>
+      <div class="shot-info-line">LENS: 35MM</div>
+      <div class="shot-info-line">INT. PAST</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="chair-wrap">
+      <img class="chair-image" src="https://i.imgur.com/placeholder-chair-3.png" alt="">
+    </div>
+
+     <div class="shot-text">
+  <h2 class="shot-title">Letter to Past Selves</h2>
+  <p class="shot-body">
+    I broke up with us before anyone else could. And now I get to sit with what that says about me. Not beat myself up because I wasn’t healed enough to try harder. I was protecting me. The you in my head isn’t gone enough for me to grieve her, but I am learning to grieve the me that I was. Angry, scared girl just trying her best with the tools she had that weren’t healed yet.
+  </p>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="shot" data-shot="4" data-light="harsh" data-time="00:00:08:08">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: WIDE</div>
+      <div class="shot-info-line">LENS: 28MM</div>
+      <div class="shot-info-line">INT. HEALING</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="chair-wrap">
+      <img class="chair-image" src="https://i.imgur.com/placeholder-chair-4.png" alt="">
+    </div>
+
+    <div class="shot-text">
+  <h2 class="shot-title">Letter to Ghost Relationships</h2>
+  <p class="shot-body">
+    I excavate the wreckage of us and unearth a version of myself I don’t recognize; younger, shaken, scared and so wholly unprepared. Instead of resenting who I was back then…I’m learning to allow myself to love her, too. She wasn’t ready to love us. She didn’t know how yet.  And that’s not her fault. 
+    <br><br>
+    I’m learning to love her the way she needed to be loved.
+  </p>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="shot" data-shot="5" data-light="soft" data-time="00:00:11:04">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: MEDIUM</div>
+      <div class="shot-info-line">LENS: 50MM</div>
+      <div class="shot-info-line">EXT. SPRING</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="chair-wrap">
+      <img class="chair-image" src="https://i.imgur.com/placeholder-chair-5.png" alt="">
+    </div>
+
+    <div class="shot-text">
+  <h2 class="shot-title">When Grief Loves You Back</h2>
+  <p class="shot-body">
+    This tightness in my chest—it’s grief, but it isn’t only grief. It’s love with no place to land, so it lands inside of me instead. Swells up inside my body and becomes a part of me. I am sitting with loss long enough to realize grief can be another way that love whispers I’m still here. This is what I mean when I say I’m learning to love grief. Because grief loves us back, in its own way. Leaves traces of itself in our hearts like how it initials a notebook after we’ve loved the pages whole.
+  </p>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="shot" data-shot="6" data-light="window" data-time="00:00:14:00">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: CLOSE</div>
+      <div class="shot-info-line">LENS: 85MM</div>
+      <div class="shot-info-line">INT. FORGIVENESS</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="chair-wrap">
+      <img class="chair-image" src="https://i.imgur.com/placeholder-chair-6.png" alt="">
+    </div>
+
+    <div class="shot-text">
+  <h2 class="shot-title">Giving Yourself Permission to Heal</h2>
+  <p class="shot-body">
+    Healing isn’t forgetting you existed or us. It’s just knowing I can think of you and us and every what-if without feeling torn open. Instead of gritting my teeth and wincing through every memory like they used to hurt me….the hurt softens. Not because you aren’t great anymore (though people change, of course they do). But because I’m learning how to let myself matter, too.
+  </p>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="shot" data-shot="7" data-light="dim" data-time="00:00:16:20">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: WIDE</div>
+      <div class="shot-info-line">LENS: 35MM</div>
+      <div class="shot-info-line">EXT. HORIZON</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="chair-wrap">
+      <img class="chair-image" src="https://i.imgur.com/placeholder-chair-7.png" alt="">
+    </div>
+
+     <div class="shot-text">
+  <h2 class="shot-title">Timing Was Never The Lesson</h2>
+  <p class="shot-body">
+    You came into my life when I was still a sentence—no, a few hastily scribbled words in a notebook. Looking back at you through wholeness, I understand some people come into our lives to grow us. Not with us. Some flowers bloom for only a season—quickly and explosively. We get them for only a brief time. The point is to be beautiful while you can and teach the Earth a lesson for next spring.
+  </p>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="shot" data-shot="8" data-light="harsh" data-time="00:00:19:12">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: MEDIUM</div>
+      <div class="shot-info-line">LENS: 50MM</div>
+      <div class="shot-info-line">INT. TIME</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="chair-wrap">
+      <img class="chair-image" src="https://i.imgur.com/placeholder-chair-8.png" alt="">
+    </div>
+
+    <div class="shot-text">
+  <h2 class="shot-title">Learning Self Compassion</h2>
+  <p class="shot-body">
+    Allowing myself to feel this grief for us has taught me to feel sorrow for who I was in the driver’s seat at the time.  Lonely. Exhausted. Hurting herself so badly she didn’t know how to nurture anyone else. I’m allowing myself to be sad for her. The hardest love letter I will ever write is to her. The woman I once was who was brave enough to walk away but too afraid to love someone wholeheartedly. Fearful. Hurt. But still beautiful.  Sometimes loving someone means grieving someone. And grief, these days looks like me mourning the girl who ran before you could. To wish she could’ve known love wouldn’t always hurt her quite so much. And I’m allowing myself to understand that young girl did the best she could with what she knew at the time. She is worth my forgiveness now. Even if she couldn’t forgive herself back then. Yes, maybe even because of that.
+  </p>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section class="shot" data-shot="9" data-light="soft" data-time="00:00:22:04">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: CLOSE</div>
+      <div class="shot-info-line">LENS: 50MM</div>
+      <div class="shot-info-line">INT. QUIET</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="chair-wrap">
+      <img class="chair-image" src="https://i.imgur.com/placeholder-chair-9.png" alt="">
+    </div>
+
+    <div class="shot-text">
+  <h2 class="shot-title">Letter for When You Love Someone Who Isn’t Lost Yet</h2>
+  <p class="shot-body">
+   I think there’s something beautiful in loving someone and sending them off into the world without you. Wishing them well. Sending up prayers that their life is everything you couldn’t give them. That they find someone who sees all their pieces and loves them still. Our grief is teaching me some relationships are magnificent because they require you to let go.  This grief has taught me that love doesn’t have to be between two people to be valid. Sometimes love’s greatest gift is releasing someone and wishing them well, wholeheartedly and without bitterness or wanting something in return. Sometimes love learns humility by leaving with open hands.
+  </p>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="shot" data-shot="10" data-light="soft" data-time="00:00:24:24">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: CLOSE</div>
+      <div class="shot-info-line">LENS: 50MM</div>
+      <div class="shot-info-line">INT. QUIET</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="chair-wrap">
+      <img class="chair-image" src="https://i.imgur.com/placeholder-chair-9.png" alt="">
+    </div>
+
+    <div class="shot-text">
+  <h2 class="shot-title">Letter I Wish I Could’ve Written</h2>
+  <p class="shot-body">
+If I could sit down with young grass-stained legs and ink stained fingers… I would tell myself you will make it. You will be okay. You are going to wake up one day and understand some stories don’t have a happy ending. Sometimes good stories don’t have a clear ending because the people in them weren’t ready to accept the love they gave. But you will learn to accept love from yourself. You will grieve us so hard and wonder how your heart will survive the blow. Grieving someone who was once important to you doesn’t make you hardened. It makes you softer than you’ve ever been. Kind. Emphathetic. It gives you a capacity for love that you thought you couldn’t possibly contain. Teaches you just how much room there is in here for love. It shows you just how strong love makes you…and that, kiddo? Is everything.
+  </p>
+    </div>
+  </section>
+
+  <!-- 11 END -->
+  <section class="shot" data-shot="11" data-light="dim" data-time="00:00:27:16">
+    <div class="shot-info">
+      <div class="shot-info-line">SHOT: STATIC</div>
+      <div class="shot-info-line">LENS: 35MM</div>
+      <div class="shot-info-line">INT. AFTER</div>
+    </div>
+
+    <div class="light-layer"></div>
+
+    <div class="endcard">
+      <div class="end-title">These Broken Parts Matter</div>
+
+      <div class="end-body">
+        <p>When I think of you now I won’t feel wounded. Just whole. Full of all the pieces of us that didn’t work and us that tried. We didn’t break each other. We broke together. But that’s not nothing. Every shard matters when you put the whole picture up to the light.</p>
+        <p>Loss doesn't take pieces of me away. It expands my capacity to feel—to love—to hurt. It forces me to choose myself, even when that choice is a painful one.</p>
+        <p><em>And believe me when I say that is not nothing. That is everything.</em></p>
+      </div>
+
+      <button class="begin-again" id="beginAgain">Begin Again</button>
+
+      <div class="end-credits">
+        THE EMPTY CHAIR<br>
+        a film told through absence<br><br>
+        (the empty chair is still empty,<br>
+        but I don't sit with it like I used to.)
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
