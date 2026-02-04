@@ -78,6 +78,7 @@ body::after{
 .opening-content{ text-align:center; padding:2rem; }
 .opening-title{
   font-family: "Ballet";
+  font-weight: normal;
   font-size:clamp(3.6rem, 7vw, 6.2rem);
   letter-spacing:0.03em;
   opacity:0;
