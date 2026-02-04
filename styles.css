@@ -1,22 +1,29 @@
 @font-face{
-  font-family: "Ballet";
+  font-family: 'Ballet';
   src: url('fonts/Ballet.ttf') format('truetype');
-  font-weight:400;
+  font-weight:normal;
   font-style:normal;
 }
 
 @font-face{
+  font-family: "PP Editorial New Ultralight Italic";
+  src: url('fonts/PPEditorialNewUltralightItalic.otf') format('opentype');
+  font-weight:normal;
+  font-style:normal;
+} 
+
+@font-face{
   font-family: "PP Editorial New Ultralight";
-  src: url('fonts/PP Editorial Ultralight.otf') format('opentype');
-  font-weight:400;
+  src: url('fonts/PPEditorialUltralight.otf') format('opentype');
+  font-weight:normal;
   font-style:normal;
 }
 
 @font-face {
     font-family: "Soul Handwriting";
     src: url(soul-handwriting.ttf) format("truetype");
-    font-weight: 400;
-    font-style: normal;
+    font-weight:normal;
+    font-style:normal;
 }
 
 *{ margin:0; padding:0; box-sizing:border-box; }
@@ -80,7 +87,6 @@ body::after{
 .opening-subtitle{
   margin-top:1rem;
   font-family: "PP Editorial New Ultralight";
-  font-weight: 100;
   font-size: 1rem;
   letter-spacing:0.14em;
   text-transform:uppercase;
@@ -293,9 +299,8 @@ body::after{
 }
 
 .shot-title {
-  font-family: "PP Editorial New Ultralight", cursive;
+  font-family: "PP Editorial New Ultralight";
   font-size: 1.55rem;
-  font-weight: 400;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 
@@ -322,9 +327,7 @@ body::after{
 }
 .end-title{
   font-size:clamp(2rem, 4vw, 3.2rem);
-  font-family: "PP Editorial New Ultralight";
-  font-weight:400;
-  font-style:italic;
+  font-family: "PP Editorial New Ultralight Italic";
   letter-spacing:-0.02em;
   color:rgba(248,248,248,0.75);
   margin-bottom:2rem;
