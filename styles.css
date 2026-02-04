@@ -6,22 +6,22 @@
 }
 
 @font-face{
-  font-family: "PP Editorial New Ultralight Italic";
+  font-family: 'PP Editorial New Ultralight Italic';
   src: url('fonts/PPEditorialNewUltralightItalic.otf') format('opentype');
   font-weight:normal;
   font-style:normal;
 } 
 
 @font-face{
-  font-family: "PP Editorial New Ultralight";
+  font-family: 'PP Editorial New Ultralight';
   src: url('fonts/PPEditorialUltralight.otf') format('opentype');
   font-weight:normal;
   font-style:normal;
 }
 
 @font-face {
-    font-family: "Soul Handwriting";
-    src: url(soul-handwriting.ttf) format("truetype");
+    font-family: 'Soul Handwriting';
+    src: url(soul-handwriting.ttf) format('truetype');
     font-weight:normal;
     font-style:normal;
 }
@@ -79,7 +79,6 @@ body::after{
 .opening-title{
   font-family: "Ballet";
   font-size:clamp(3.6rem, 7vw, 6.2rem);
-  font-weight:400;
   letter-spacing:0.03em;
   opacity:0;
   animation:fadeIn 2.1s ease-out forwards;
@@ -99,7 +98,6 @@ body::after{
   margin-top:7rem;
   font-family: "Ballet";
   font-size:1.3rem;
-  font-weight: 400;
   letter-spacing:0.08em;
   color:rgba(248,248,248,0.55);
   opacity:0;
