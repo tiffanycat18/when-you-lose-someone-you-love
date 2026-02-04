@@ -7,7 +7,7 @@
 
 @font-face{
   font-family: 'PP Editorial New Ultralight Italic';
-  src: url('fonts/PPEditorialNewUltralightItalic.otf') format('opentype');
+  src: url('fonts/PPEditorialNew UltralightItalic.otf') format('opentype');
   font-weight:normal;
   font-style:normal;
 } 
@@ -327,6 +327,7 @@ body::after{
 .end-title{
   font-size:clamp(2rem, 4vw, 3.2rem);
   font-family: "PP Editorial New Ultralight Italic";
+  font-style: italic;
   letter-spacing:-0.02em;
   color:rgba(248,248,248,0.75);
   margin-bottom:2rem;
