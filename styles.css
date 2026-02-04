@@ -21,7 +21,7 @@
 
 @font-face {
     font-family: 'Soul Handwriting';
-    src: url(fonts/soul-handwriting.ttf) format('truetype');
+    src: url('fonts/soul-handwriting.ttf') format('truetype');
     font-weight:normal;
     font-style:normal;
 }
