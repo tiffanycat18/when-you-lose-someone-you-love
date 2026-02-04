@@ -248,7 +248,7 @@ body::after{
   opacity:0.78;
 }
 
-/* chair centered — fade only */
+/* chair centered (fade only) */
 .chair-wrap{
   position:absolute;
   inset:0;
