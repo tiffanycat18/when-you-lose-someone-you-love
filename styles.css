@@ -319,8 +319,10 @@ body::after{
 
 .shot-title {
   font-family: "Mrs Saint Delafield";
+  font-weight: 100;
   font-size: 2.5rem;
   letter-spacing: 0.12em;
+  line-height: 1.2;
 
   color: rgba(232, 230, 225, 0.55);
   margin-bottom: 1rem;
