@@ -382,8 +382,8 @@ body::after{
   margin-top:12rem;
   font-family:var(--mono);
   font-size:0.75rem;
-  letter-spacing:0.06em;
-  line-height:1.85;
+  letter-spacing:0.05em;
+  line-height:1.8;
   color:rgba(248,248,248,0.35);
   opacity:0.75;
 }
