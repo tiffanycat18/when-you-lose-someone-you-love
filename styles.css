@@ -344,18 +344,18 @@ body::after{
   text-align:center;
 }
 .end-title{
-  font-size:clamp(2rem, 4vw, 3.2rem);
-  font-family: "PP Editorial New Ultralight Italic";
+  font-size:clamp(5.3rem, 4vw, 6.5rem);
+  font-family: "Mrs Saint Delafield";
   letter-spacing:-0.02em;
   color:rgba(248,248,248,0.75);
   margin-bottom:2rem;
 }
 .end-body{
   max-width:720px;
-  font-size:clamp(0.95rem, 1.1vw, 1.05rem);
+  font-size:clamp(0.85rem, 1.1vw, 0.95rem);
   line-height:2.15;
   color:rgba(248,248,248,0.45);
-  font-family: "PP Editorial New Ultralight";
+  font-family: "PP Editorial New Ultralight Italic";
 }
 .end-body p{ margin-bottom:1.8rem; }
 .end-body em{ color:rgba(248,248,248,0.65); font-style:italic; }
