@@ -348,6 +348,7 @@ body::after{
 .end-title{
   font-size:clamp(5.3rem, 4vw, 6.5rem);
   font-family: "Mrs Saint Delafield";
+  font-weight: 100;
   letter-spacing:-0.02em;
   color:rgba(248,248,248,0.75);
   margin-bottom:2rem;
