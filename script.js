@@ -266,58 +266,51 @@ function init() {
 init();
 
 // =============================
-// SCROLL / SWIPE NAVIGATION
+// SCROLL NAV (ONE SHOT PER GESTURE)
 // =============================
-let wheelLockUntil = 0;
+let wheelLocked = false;
+let wheelEndTimer = null;
+const WHEEL_END_MS = 180;
+
+function closestScrollable(el) {
+  while (el && el !== document.body) {
+    const style = getComputedStyle(el);
+    const canScrollY =
+      (style.overflowY === "auto" || style.overflowY === "scroll") &&
+      el.scrollHeight > el.clientHeight;
+    if (canScrollY) return el;
+    el = el.parentElement;
+  }
+  return null;
+}
 
 function onWheelAdvance(e) {
+  // IMPORTANT: if you want scroll to work only after opening screen
+  // keep this check. If you suspect it's blocking, temporarily comment it out.
   if (!openingScreen.classList.contains("hidden")) return;
   if (performance.now() < blockAdvanceUntil) return;
 
-  // stop scrolling the page while navigating shots
+  // If the user is trying to scroll inside a scrollable box (like .end-body),
+  // let that scroll naturally.
+  const scroller = closestScrollable(e.target);
+  if (scroller) return;
+
   e.preventDefault();
 
-  // simple throttle so one scroll gesture = one shot
-  if (performance.now() < wheelLockUntil) return;
-  wheelLockUntil = performance.now() + 450;
+  // gesture-end timer unlock
+  clearTimeout(wheelEndTimer);
+  wheelEndTimer = setTimeout(() => (wheelLocked = false), WHEEL_END_MS);
 
-  const delta = e.deltaY || e.wheelDelta || 0;
-  if (delta > 0) nextShot();
-  else if (delta < 0) previousShot();
-}
+  // one advance per gesture
+  if (wheelLocked) return;
 
-// passive:false so preventDefault works
-window.addEventListener("wheel", onWheelAdvance, { passive: false });
+  const dy = e.deltaY || 0;
+  if (Math.abs(dy) < 0.5) return;
 
-
-// --- Mobile touch swipe (vertical) ---
-let touchStartY = 0;
-let touchStartX = 0;
-
-function onTouchStart(e) {
-  if (!openingScreen.classList.contains("hidden")) return;
-  if (performance.now() < blockAdvanceUntil) return;
-  const t = e.touches[0];
-  touchStartY = t.clientY;
-  touchStartX = t.clientX;
-}
-
-function onTouchEnd(e) {
-  if (!openingScreen.classList.contains("hidden")) return;
-  if (performance.now() < blockAdvanceUntil) return;
-
-  const t = e.changedTouches[0];
-  const dy = t.clientY - touchStartY;
-  const dx = t.clientX - touchStartX;
-
-  // prefer vertical swipe; ignore tiny moves
-  if (Math.abs(dy) < 40) return;
-  if (Math.abs(dy) < Math.abs(dx)) return;
-
-  // swipe up = next, swipe down = previous
-  if (dy < 0) nextShot();
+  wheelLocked = true;
+  if (dy > 0) nextShot();
   else previousShot();
 }
 
-window.addEventListener("touchstart", onTouchStart, { passive: true });
-window.addEventListener("touchend", onTouchEnd, { passive: true });
+// Capture=true makes sure we catch the wheel early (trackpad-friendly)
+document.addEventListener("wheel", onWheelAdvance, { passive: false, capture: true });
