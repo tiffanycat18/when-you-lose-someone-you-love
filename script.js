@@ -285,8 +285,6 @@ function closestScrollable(el) {
 }
 
 function onWheelAdvance(e) {
-  // IMPORTANT: if you want scroll to work only after opening screen
-  // keep this check. If you suspect it's blocking, temporarily comment it out.
   if (!openingScreen.classList.contains("hidden")) return;
   if (performance.now() < blockAdvanceUntil) return;
 
