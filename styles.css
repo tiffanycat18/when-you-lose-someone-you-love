@@ -10,7 +10,7 @@
   src: url('fonts/PPEditorialNewUltralightItalic.otf') format('opentype');
   font-weight:normal;
   font-style:normal;
-} 
+}
 
 @font-face{
   font-family: 'PP Editorial New Ultralight';
@@ -19,39 +19,43 @@
   font-style:normal;
 }
 
-@font-face {
-    font-family: 'Soul Handwriting';
-    src: url('fonts/soul-handwriting.ttf') format('truetype');
-    font-weight:normal;
-    font-style:normal;
+@font-face{
+  font-family: 'Soul Handwriting';
+  src: url('fonts/soul-handwriting.ttf') format('truetype');
+  font-weight:normal;
+  font-style:normal;
 }
 
-@font-face {
-    font-family: 'Very Vogue Display';
-    src: url('fonts/VeryVogueDisplay.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
+@font-face{
+  font-family: 'Very Vogue Display';
+  src: url('fonts/VeryVogueDisplay.otf') format('opentype');
+  font-weight:normal;
+  font-style:normal;
 }
 
-@font-face {
-    font-family: 'Mrs Saint Delafield';
-    src: url('fonts/MrsSaintDelafield.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+@font-face{
+  font-family: 'Mrs Saint Delafield';
+  src: url('fonts/MrsSaintDelafield.ttf') format('truetype');
+  font-weight:normal;
+  font-style:normal;
 }
 
-@font-face {
-    font-family: 'Cedarvile';
-    src: url('fonts/Cedarvile.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+@font-face{
+  font-family: 'Cedarvile';
+  src: url('fonts/Cedarvile.ttf') format('truetype');
+  font-weight:normal;
+  font-style:normal;
 }
+
 
 *{ margin:0; padding:0; box-sizing:border-box; }
 
 :root{
   --black:#0a0a0a;
   --mono:'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --safeX: clamp(8px, 3.5vw, 16px);
+  --safeTop: clamp(70px, 9vh, 100px);
+  --safeBottom: clamp(20px, 6vh, 50px);
 }
 
 html, body{ height:100%; }
@@ -72,7 +76,7 @@ body::before{
   mix-blend-mode:overlay;
 }
 
-/* breathing vignette (6s, smoother) */
+/* breathing vignette */
 body::after{
   content:'';
   position:fixed; inset:0;
@@ -86,7 +90,9 @@ body::after{
   50%{ opacity:0.90; }
 }
 
-/* OPENING DOOR */
+/* =========================
+   OPENING (SEPARATE SCREEN)
+   ========================= */
 .opening-door{
   position:fixed; inset:0;
   z-index:100;
@@ -94,12 +100,15 @@ body::after{
   align-items:center;
   justify-content:center;
   transition:opacity 1.35s ease;
+  background:rgba(10,10,10,0.92); /* keeps the opening separate */
 }
 .opening-door.hidden{ opacity:0; pointer-events:none; }
+
 .opening-content{ text-align:center; padding:2rem; }
+
 .opening-title{
-  font-family: "Ballet";
-  font-weight: normal;
+  font-family:"Ballet";
+  font-weight:normal;
   font-size:clamp(3.6rem, 7vw, 6.2rem);
   letter-spacing:0.03em;
   opacity:0;
@@ -107,18 +116,17 @@ body::after{
 }
 .opening-subtitle{
   margin-top:1rem;
-  font-family: "PP Editorial New Ultralight";
-  font-size: 1rem;
+  font-family:"PP Editorial New Ultralight";
+  font-size:1rem;
   letter-spacing:0.14em;
   text-transform:uppercase;
   color:rgba(248,248,248,0.35);
   opacity:0;
   animation:fadeIn 2.1s ease-out 0.55s forwards;
 }
-
 .opening-prompt{
   margin-top:7rem;
-  font-family: "Ballet";
+  font-family:"Ballet";
   font-size:1.3rem;
   letter-spacing:0.08em;
   color:rgba(248,248,248,0.55);
@@ -128,7 +136,9 @@ body::after{
 @keyframes fadeIn{ to{ opacity:1; } }
 @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.42} }
 
-/* TOP UI */
+/* =========================
+   TOP UI
+   ========================= */
 .film-ui{
   position:fixed;
   top:0; left:0;
@@ -142,11 +152,11 @@ body::after{
   pointer-events:none;
 }
 .film-logo{
-  font-family: "PP Editorial New Ultralight";
+  font-family:"PP Editorial New Ultralight";
   font-size:0.72rem;
   letter-spacing:0.18em;
   text-transform:uppercase;
-  color:rgba(248,248,248,0.8);
+  color:rgba(255, 255, 255, 0.8);
 }
 .timecode{
   font-family:var(--mono);
@@ -161,7 +171,9 @@ body::after{
   color:rgba(248,248,248,0.55);
 }
 
-/* SHOT LIST — bare numbers */
+/* =========================
+   SHOT LIST (RIGHT)
+   ========================= */
 .shotlist{
   position:fixed;
   right:1.25rem;
@@ -175,15 +187,8 @@ body::after{
   font-family:var(--mono);
   font-size:0.65rem;
   letter-spacing:0.18em;
-  color:rgb(169, 169, 169);
+  color:rgb(255, 255, 255);
   margin-bottom:0.35rem;
-}
-.shotlist-count{
-  font-family:var(--mono);
-  font-size:0.65rem;
-  letter-spacing:0.12em;
-  color:rgba(248,248,248,0.18);
-  margin-bottom:0.7rem;
 }
 .shotlist-nums{
   display:flex;
@@ -195,25 +200,22 @@ body::after{
   font-family:var(--mono);
   font-size:0.72rem;
   letter-spacing:0.10em;
-  color:rgb(143, 143, 143);
+  color:rgb(226, 226, 226);
   cursor:pointer;
   transition:opacity .35s ease, color .35s ease;
   opacity:0.55;
 }
-.shotnum:hover{ 
-  opacity:1; 
-  color:white }
-  
-.shotnum.active{
-  opacity:1;
-  color:rgba(255, 255, 255, 1);
-}
+.shotnum:hover{ opacity:1; color:white; }
+.shotnum.active{ opacity:1; color:rgba(255,255,255,1); }
 
-/* FADE STACK */
-.shots{ position: fixed; inset: 0; z-index: 10; }
+/* =========================
+   FADE STACK
+   ========================= */
+.shots{ position:fixed; inset:0; z-index:10; }
+
 .shot{
   position:fixed; inset:0;
-  z-index: 10; 
+  z-index:10;
   opacity:0;
   pointer-events:none;
   transition:opacity 1.8s cubic-bezier(0.45, 0, 0.2, 1);
@@ -223,7 +225,40 @@ body::after{
   pointer-events:auto;
 }
 
-/* top-left shot info (fade only) */
+/* =========================
+   SHOT BACKGROUND VIDEO (PER SHOT)
+   ========================= */
+.shot-video{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  overflow:hidden;
+  pointer-events:none; /* clicks still advance shots */
+  background:#000;
+}
+
+.shot-film{
+  width:100vw;
+  height:100vh;
+  object-fit:cover;      /* full-bleed */
+  object-position:center;
+  display:block;
+}
+
+/* subtle darkening gradient on top of video */
+.shot-video::after{
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(to bottom,
+    rgba(10,10,10,0.25) 0%,
+    rgba(10,10,10,0.08) 40%,
+    rgba(10,10,10,0.62) 100%);
+  pointer-events:none;
+}
+
+/* =========================
+   SHOT INFO (TOP LEFT)
+   ========================= */
 .shot-info{
   position:fixed;
   top:5.75rem;
@@ -240,13 +275,18 @@ body::after{
 }
 .shot.active .shot-info{ opacity:1; }
 
-/* lighting per shot */
+/* =========================
+   LIGHT LAYER (KEEP)
+   ========================= */
 .light-layer{
-  position:absolute; inset:0;
+  position:absolute;
+  inset:0;
+  z-index:5;
   pointer-events:none;
   opacity:0.92;
   transition:opacity 1.8s cubic-bezier(0.45, 0, 0.2, 1);
 }
+
 .shot[data-light="soft"] .light-layer{
   background:
     radial-gradient(circle at 40% 30%, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0) 56%),
@@ -269,75 +309,110 @@ body::after{
   opacity:0.78;
 }
 
-/* chair centered (fade only) */
-.chair-wrap{
+/* =========================
+   SHOT TEXT (BASE + POSITIONS)
+   ========================= */
+.shot-text{
   position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:10vh 10vw;
-  opacity:0;
-  transition:opacity 1.8s cubic-bezier(0.45, 0, 0.2, 1);
-}
-.shot.active .chair-wrap{ opacity:1; }
+  z-index:20;
 
-/* chair breathing 6s */
-.chair-image{
-  max-width:min(460px, 62vw);
-  max-height:min(620px, 72vh);
-  width:auto;
-  height:auto;
-  object-fit:contain;
-  opacity:0.6;
-  filter:drop-shadow(0 28px 80px rgba(0,0,0,0.6)) drop-shadow(0 10px 22px rgba(0,0,0,0.35));
-  animation:chairBreathe 6s cubic-bezier(0.45, 0, 0.2, 1) infinite;
-  transform-origin:50% 70%;
-}
-@keyframes chairBreathe{
-  0%,100%{ transform:scale(1); }
-  50%{ transform:scale(1.006); }
-}
+  max-width:560px;
 
-/* text bottom-left (fade only, delayed) */
-.shot-text {
-  position: absolute;
-  bottom: 4vh;
-  left: 3rem;
-  max-width: 560px;
-
-  color: rgba(232, 230, 225, 0.82);
-  text-shadow: 0 2px 14px rgba(0,0,0,0.45);
+  color:rgba(248,248,248,0.90);
+  text-shadow:0 2px 14px rgba(144, 144, 144, 0.45);
   line-height:1.78;
   letter-spacing:0.01em;
-  color:rgba(248,248,248,0.90);
-  text-shadow:0 2px 14px rgba(0,0,0,0.45);
 
   opacity:0;
   transition:opacity 1.35s ease 0.7s;
-}
 
-.shot-title {
-  font-family: "Mrs Saint Delafield";
-  font-weight: 100;
-  font-size: 2.5rem;
-  letter-spacing: 0.12em;
-  line-height: 1.2;
-
-  color: rgba(232, 230, 225, 0.55);
-  margin-bottom: 1rem;
+  /* default position */
+  left:3rem;
+  bottom:4vh;
+  top:auto;
+  right:auto;
+  transform:none;
+  text-align:left;
 }
-.shot-body {
-  font-size: clamp(0.6rem, 1.1vw, 0.7rem);
-  line-height: 1.65;
-  font-family: var(--mono);
-}
-
 .shot.active .shot-text{ opacity:1; }
 
-/* end card */
+.shot-title{
+  font-family:"Mrs Saint Delafield";
+  font-weight:100;
+  font-size:2.5rem;
+  letter-spacing:0.12em;
+  line-height:1.2;
+  color:rgba(255, 255, 255, 1);
+  margin-bottom:1rem;
+}
+.shot-body{
+  font-size:clamp(0.6rem, 1.1vw, 0.7rem);
+  line-height:1.65;
+  font-family:var(--mono);
+}
+
+/* positions */
+.shot[data-textpos="bottom-left"]  .shot-text{ left:3rem;  bottom:4vh; top:auto; right:auto; transform:none; text-align:left; }
+.shot[data-textpos="bottom-right"] .shot-text{ right:3rem; bottom:4vh; top:auto; left:auto; transform:none; text-align:right; }
+.shot[data-textpos="top-left"]     .shot-text{ left:3rem;  top:12vh; bottom:auto; right:auto; transform:none; text-align:left; }
+.shot[data-textpos="top-right"]    .shot-text{ right:3rem; top:12vh; bottom:auto; left:auto; transform:none; text-align:right; }
+
+.shot[data-textpos="center"] .shot-text{
+  left:50%;
+  top:50%;
+  right:auto;
+  bottom:auto;
+  transform:translate(-50%, -50%);
+  text-align:center;
+  max-width:600px;
+}
+
+.shot[data-textpos="left-center"] .shot-text{
+  left:3rem;
+  top:50%;
+  bottom:auto;
+  right:auto;
+  transform:translateY(-50%);
+  text-align:left;
+  max-width:520px;
+}
+
+.shot[data-textpos="right-center"] .shot-text{
+  right:3rem;
+  top:50%;
+  bottom:auto;
+  left:auto;
+  transform:translateY(-50%);
+  text-align:right;
+  max-width:520px;
+}
+
+.shot[data-textpos="top-center"] .shot-text{
+  left:50%;
+  top:12vh;
+  bottom:auto;
+  right:auto;
+  transform:translateX(-50%);
+  text-align:center;
+  max-width:600px;
+}
+
+.shot[data-textpos="bottom-center"] .shot-text{
+  left:50%;
+  bottom:8vh;
+  top:auto;
+  right:auto;
+  transform:translateX(-50%);
+  text-align:center;
+  max-width:600px;
+}
+
+/* =========================
+   END CARD
+   ========================= */
 .endcard{
   position:absolute; inset:0;
+  z-index:20;
   display:flex;
   flex-direction:column;
   align-items:center;
@@ -345,10 +420,11 @@ body::after{
   padding:10vh 8vw 8vh;
   text-align:center;
 }
+
 .end-title{
   font-size:clamp(5.3rem, 4vw, 6.5rem);
-  font-family: "Mrs Saint Delafield";
-  font-weight: 100;
+  font-family:"Mrs Saint Delafield";
+  font-weight:100;
   letter-spacing:-0.02em;
   color:rgba(248,248,248,0.75);
   margin-bottom:2rem;
@@ -358,26 +434,26 @@ body::after{
   font-size:clamp(0.85rem, 1.1vw, 0.95rem);
   line-height:2.15;
   color:rgba(248,248,248,0.45);
-  font-family: "PP Editorial New Ultralight Italic";
+  font-family:"PP Editorial New Ultralight Italic";
 }
 .end-body p{ margin-bottom:1.8rem; }
 .end-body em{ color:rgba(248,248,248,0.65); font-style:italic; }
+
 .begin-again{
-  font-family: "Ballet";
+  font-family:"Ballet";
   margin-top:3rem;
-  border: none;
+  border:none;
   padding:0;
   background:none;
-  color: rgba(255,255,255,0.35);
+  color:rgba(255,255,255,0.35);
   font-size:2rem;
   letter-spacing:0.16em;
   cursor:pointer;
-  transition: opacity 0.4s ease;
-  opacity: 0.7;
+  transition:opacity 0.4s ease;
+  opacity:0.7;
 }
-.begin-again:hover{
-  opacity: 1;
-}
+.begin-again:hover{ opacity:1; }
+
 .end-credits{
   margin-top:12rem;
   font-family:var(--mono);
@@ -388,26 +464,141 @@ body::after{
   opacity:0.75;
 }
 
-/* responsive */
+/* =========================
+   RESPONSIVE
+   ========================= */
 @media (max-width: 900px){
-  .shotlist{ display:none; }
-  .shot-text{ left:7vw; right:7vw; bottom:9vh; }
+
+   .shotlist{
+    display:block;
+    right:0.75rem;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:35;
+  }
+
+  /* smaller + easier to tap */
+  .shotnum{
+    font-size:0.6rem;
+    padding:0.3rem 0.3rem;
+    opacity:0.75;
+    touch-action: manipulation;
+    line-height: 0.5;
+  }
+
+  .shotlist-label{
+    font-size:0.6rem;
+    margin-bottom:0.25rem;
+    opacity:0.75;
+  }
+
+  /* existing mobile text layout */
+  .film-logo{
+    font-size: 0.7rem;
+    margin-top: 0.8rem;
+  }
+
   .film-ui{ padding:1rem 1.1rem; }
   .shot-info{ left:1.1rem; top:4.9rem; }
+
+  .shot-title{
+    font-size: clamp(1.8rem, 5.8vw, 2.2rem);
+    line-height: 1.15;
+    letter-spacing: 0.08em;
+  }
+
+  .shot-body{
+    font-size: 0.65rem;
+    line-height: 1.5;
+  }
+
+/* ALL shot text boxes stay inside the viewport */
+  .shot-text{
+    /* hard bounds */
+    left: 25px !important;     
+    right: 48px !important;   
+    max-width: none !important;
+    width: auto !important;
+    transform: none !important;
+  
+    /* keep it readable and wrap */
+    max-width: none !important;
+    width: auto !important;
+    word-break: normal;
+    overflow-wrap: anywhere;
+
+    /* prevent transform pushes from center/right positions */
+    transform: none !important;
+
+    /* don't let it exceed the box */
+    box-sizing: border-box;
+  }
+
+  .shot-text.pos-bottom-left,
+  .shot-text.pos-bottom-right,
+  .shot-text.pos-top-left,
+  .shot-text.pos-top-right,
+  .shot-text.pos-center,
+  .shot-text.pos-left-center,
+  .shot-text.pos-right-center,
+  .shot-text.pos-top-center,
+  .shot-text.pos-bottom-center{
+    left: var(--safeX);
+    right: var(--safeX);
+    top: auto;
+    bottom: var(--safeBottom);
+    text-align: left;
+    transform: none;
+  }
+
+  .endcard{
+  position:absolute;
+  inset:0;
+
+  display:grid;
+  grid-template-rows: auto auto auto auto;
+  justify-items:center;
+
+  align-content:center;
+
+  padding-top: max(82px, 10vh);
+  padding-right: 50px;
+  padding-bottom: 24px;
+  padding-left: 36px;
+
+  gap: 14px;
+  overflow:hidden;
+  text-align:center;
 }
 
-/* background video */
-.bg-video{
-  position: fixed;
-  inset: 0;
-  z-index: 0;          
-  overflow: hidden;
-  pointer-events: none; 
+.end-title{
+  font-size: clamp(3rem, 8vw, 4rem);
+  line-height: 1.05;
+  margin: 0; 
 }
 
-.bg-video video{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: brightness(0.85) contrast(0.95) saturate(0.9);
+.end-body{
+  width:100%;
+  max-width:520px;
+
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+
+  font-size: clamp(0.82rem, 2.6vw, 0.95rem);
+  line-height:1.9;
+
+  max-height:44dvh;
+  padding-right:4px;
+}
+
+.begin-again{
+  margin-top: 20px;
+  font-size:1.4rem;
+}
+
+.end-credits{
+  margin-top:120px;
+  font-size:0.6rem;
+  line-height:1.6;
+}
 }

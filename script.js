@@ -4,12 +4,64 @@ const beginAgainButton = document.getElementById("beginAgain");
 
 const shots = Array.from(document.querySelectorAll(".shot"));
 const shotNumbersWrap = document.getElementById("shotNums");
-const shotCounterUI = document.getElementById("shotCount"); // optional
+const shotCounterUI = document.getElementById("shotCount"); 
 
 let currentShotIndex = 0;
-
-// prevents the same click from triggering enter/reset + next
 let blockAdvanceUntil = 0;
+
+// -----------------------------
+// VIDEO CONTROL (prevents freezing)
+// -----------------------------
+function stopAllVideos() {
+  shots.forEach((shot) => {
+    const v = shot.querySelector("video.shot-film");
+    if (!v) return;
+    v.pause();
+  });
+}
+
+async function playActiveShotVideo() {
+  const activeShot = shots[currentShotIndex];
+  const v = activeShot.querySelector("video.shot-film");
+  if (!v) return;
+
+  // force-load + restart so I don't get a stuck first frame
+  try {
+    v.currentTime = 0;
+  } catch (e) {}
+
+  // If it hasn't loaded yet, calling load() helps
+  v.load();
+
+  // Wait a microtask so class changes/layout settle
+  await Promise.resolve();
+
+  const p = v.play();
+  if (p && typeof p.catch === "function") {
+    p.catch((err) => {
+      // Usually harmless (autoplay policy / not enough data yet)
+      console.warn("Video play blocked or delayed:", err);
+    });
+  }
+}
+
+// if a video stalls, try to recover
+function attachVideoRecovery() {
+  shots.forEach((shot) => {
+    const v = shot.querySelector("video.shot-film");
+    if (!v) return;
+
+    v.addEventListener("stalled", () => {
+      // quick nudge
+      v.load();
+      v.play().catch(() => {});
+    });
+
+    v.addEventListener("error", () => {
+      console.warn("Video error:", v.currentSrc);
+    });
+  });
+}
 
 // -----------------------------
 // 24fps timecode helpers
@@ -94,17 +146,13 @@ function buildShotNumbers() {
 }
 
 function updateShotNumbersUI() {
-  // optional: "01 / 11"
   if (shotCounterUI) {
     shotCounterUI.textContent =
       `${String(currentShotIndex + 1).padStart(2, "0")} / ${String(shots.length).padStart(2, "0")}`;
   }
 
-  // ONLY the current one is white
   const nums = Array.from(document.querySelectorAll(".shotnum"));
-  nums.forEach((el, i) => {
-    el.classList.toggle("active", i === currentShotIndex);
-  });
+  nums.forEach((el, i) => el.classList.toggle("active", i === currentShotIndex));
 }
 
 // -----------------------------
@@ -122,15 +170,14 @@ function showShot(index) {
 
   updateShotNumbersUI();
   startTimecodeForCurrentShot();
+
+  // VIDEO: only play the active shot video
+  stopAllVideos();
+  playActiveShotVideo();
 }
 
-function nextShot() {
-  showShot(currentShotIndex + 1);
-}
-
-function previousShot() {
-  showShot(currentShotIndex - 1);
-}
+function nextShot() { showShot(currentShotIndex + 1); }
+function previousShot() { showShot(currentShotIndex - 1); }
 
 // -----------------------------
 // Enter / Reset
@@ -138,7 +185,7 @@ function previousShot() {
 function enterFilm(e) {
   if (e) e.stopPropagation();
 
-  // Always start at Shot 1
+  // start at shot 1
   shots.forEach((s) => s.classList.remove("active"));
   currentShotIndex = 0;
   shots[0].classList.add("active");
@@ -147,42 +194,37 @@ function enterFilm(e) {
   updateShotNumbersUI();
   startTimecodeForCurrentShot();
 
-  // block the same click from advancing
+  stopAllVideos();
+  playActiveShotVideo();
+
   blockAdvanceUntil = performance.now() + 350;
 }
 
 function resetToOpening() {
   if (rafId) cancelAnimationFrame(rafId);
 
-  // reset the film state
+  stopAllVideos();
+
   shots.forEach((s) => s.classList.remove("active"));
   currentShotIndex = 0;
-  shots[0].classList.add("active");
 
   if (timecodeUI) timecodeUI.textContent = "00:00:00:00";
-
   updateShotNumbersUI();
+
   openingScreen.classList.remove("hidden");
 
-  // block accidental advance
   blockAdvanceUntil = performance.now() + 350;
 }
 
 // -----------------------------
 // Controls (click + keyboard)
 // -----------------------------
-if (openingScreen) {
-  openingScreen.addEventListener("click", enterFilm);
-}
+if (openingScreen) openingScreen.addEventListener("click", enterFilm);
 
 document.addEventListener("click", (e) => {
-  // if opening is visible, don't advance (opening click handles enter)
   if (!openingScreen.classList.contains("hidden")) return;
-
-  // block right after enter/reset
   if (performance.now() < blockAdvanceUntil) return;
 
-  // don't advance if clicking shot list or Begin Again
   if (e.target.closest("#shotlist")) return;
   if (e.target.closest("#beginAgain")) return;
 
@@ -209,21 +251,73 @@ if (beginAgainButton) {
   });
 }
 
-// -----------------------------
-// Preload chair images (smoother fades)
-// -----------------------------
-(function preloadChairImages() {
-  shots.forEach((shot) => {
-    const img = shot.querySelector(".chair-image");
-    if (!img) return;
-    const pre = new Image();
-    pre.src = img.src;
-  });
-})();
+function init() {
+  // hide all shots until entering
+  shots.forEach((s) => s.classList.remove("active"));
+  stopAllVideos();
 
-// -----------------------------
-// Init
-// -----------------------------
-buildShotNumbers();
-updateShotNumbersUI();
-if (timecodeUI) timecodeUI.textContent = "00:00:00:00";
+  buildShotNumbers();
+  updateShotNumbersUI();
+  if (timecodeUI) timecodeUI.textContent = "00:00:00:00";
+
+  attachVideoRecovery();
+}
+
+init();
+
+// =============================
+// SCROLL / SWIPE NAVIGATION
+// =============================
+let wheelLockUntil = 0;
+
+function onWheelAdvance(e) {
+  if (!openingScreen.classList.contains("hidden")) return;
+  if (performance.now() < blockAdvanceUntil) return;
+
+  // stop scrolling the page while navigating shots
+  e.preventDefault();
+
+  // simple throttle so one scroll gesture = one shot
+  if (performance.now() < wheelLockUntil) return;
+  wheelLockUntil = performance.now() + 450;
+
+  const delta = e.deltaY || e.wheelDelta || 0;
+  if (delta > 0) nextShot();
+  else if (delta < 0) previousShot();
+}
+
+// passive:false so preventDefault works
+window.addEventListener("wheel", onWheelAdvance, { passive: false });
+
+
+// --- Mobile touch swipe (vertical) ---
+let touchStartY = 0;
+let touchStartX = 0;
+
+function onTouchStart(e) {
+  if (!openingScreen.classList.contains("hidden")) return;
+  if (performance.now() < blockAdvanceUntil) return;
+  const t = e.touches[0];
+  touchStartY = t.clientY;
+  touchStartX = t.clientX;
+}
+
+function onTouchEnd(e) {
+  if (!openingScreen.classList.contains("hidden")) return;
+  if (performance.now() < blockAdvanceUntil) return;
+
+  const t = e.changedTouches[0];
+  const dy = t.clientY - touchStartY;
+  const dx = t.clientX - touchStartX;
+
+  // prefer vertical swipe; ignore tiny moves
+  if (Math.abs(dy) < 40) return;
+  if (Math.abs(dy) < Math.abs(dx)) return;
+
+  // swipe up = next, swipe down = previous
+  if (dy < 0) nextShot();
+  else previousShot();
+}
+
+window.addEventListener("touchstart", onTouchStart, { passive: true });
+window.addEventListener("touchend", onTouchEnd, { passive: true });
