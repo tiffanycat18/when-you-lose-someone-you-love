@@ -237,6 +237,10 @@ body::after{
   background:#000;
 }
 
+.shot-video video{
+  filter: brightness(0.94) contrast(1.08) saturate(0.92);
+}
+
 .shot-film{
   width:100vw;
   height:100vh;
@@ -248,12 +252,16 @@ body::after{
 /* subtle darkening gradient on top of video */
 .shot-video::after{
   content:'';
-  position:absolute; inset:0;
-  background:linear-gradient(to bottom,
-    rgba(10,10,10,0.25) 0%,
-    rgba(10,10,10,0.08) 40%,
-    rgba(10,10,10,0.62) 100%);
+  position:absolute;
+  inset:0;
   pointer-events:none;
+
+  background:
+    linear-gradient(to bottom,
+      rgba(0,0,0,0.45) 0%,
+      rgba(0,0,0,0.25) 40%,
+      rgba(0,0,0,0.75) 100%
+    );
 }
 
 /* =========================
@@ -379,7 +387,7 @@ body::after{
 
 .shot[data-textpos="right-center"] .shot-text{
   right:10rem;
-  top:50%;
+  top:40%;
   bottom:auto;
   left:auto;
   transform:translateY(-50%);
