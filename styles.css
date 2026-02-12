@@ -545,7 +545,7 @@ body::after{
   .shot-text.pos-bottom-center{
     left: var(--safeX);
     right: var(--safeX);
-    top: auto;
+    top:auto;
     bottom: var(--safeBottom);
     text-align: left;
     transform: none;
@@ -601,4 +601,8 @@ body::after{
   font-size:0.6rem;
   line-height:1.6;
 }
+
+.shot[data-shot="7"] .shot-text{
+    transform: translateY(52px) !important; 
+  }
 }
