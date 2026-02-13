@@ -434,18 +434,18 @@ body::after{
   font-family:"Mrs Saint Delafield";
   font-weight:100;
   letter-spacing:-0.02em;
-  color:rgba(248,248,248,0.75);
+  color:rgba(255, 255, 255, 1);
   margin-bottom:2rem;
 }
 .end-body{
   max-width:720px;
   font-size:clamp(0.85rem, 1.1vw, 0.95rem);
   line-height:2.15;
-  color:rgba(248,248,248,0.45);
+  color:rgba(255, 255, 255, 1);
   font-family:"PP Editorial New Ultralight Italic";
 }
 .end-body p{ margin-bottom:1.8rem; }
-.end-body em{ color:rgba(248,248,248,0.65); font-style:italic; }
+.end-body em{ color:rgba(255, 255, 255, 1); font-style:italic; }
 
 .begin-again{
   font-family:"Ballet";
@@ -453,7 +453,7 @@ body::after{
   border:none;
   padding:0;
   background:none;
-  color:rgba(255,255,255,0.35);
+  color:rgba(255, 255, 255, 0.35);
   font-size:2rem;
   letter-spacing:0.16em;
   cursor:pointer;
@@ -468,8 +468,8 @@ body::after{
   font-size:0.75rem;
   letter-spacing:0.05em;
   line-height:1.8;
-  color:rgba(248,248,248,0.35);
-  opacity:0.75;
+  color:rgba(255, 255, 255, 0.35);
+  opacity:1;
 }
 
 /* =========================
