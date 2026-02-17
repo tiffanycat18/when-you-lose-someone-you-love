@@ -614,16 +614,16 @@ body { overscroll-behavior: none; }
 
   display:grid;
   grid-template-rows: auto auto auto auto;
-  justify-items:center;
+  justify-content: flex-end;
 
   align-content:center;
 
   padding-top: max(92px, 20vh);
   padding-right: 50px;
-  padding-bottom: 24px;
+  padding-bottom: 34px;
   padding-left: 36px;
 
-  gap: 14px;
+  gap: 20px;
   overflow:hidden;
   text-align:center;
 }
@@ -647,7 +647,7 @@ body { overscroll-behavior: none; }
 }
 
 .begin-again{
-  margin-top: 40px;
+  margin-top: 30px;
   font-size:1.4rem;
   color:rgba(255, 255, 255, 1);
 }
