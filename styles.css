@@ -922,3 +922,82 @@ body { overscroll-behavior: none; }
     line-height: 1.55;
   }
 }
+
+/* =========================
+   MOBILE TOP UI 
+   ========================= */
+@media (max-width: 900px){
+
+  .film-ui{
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto auto;
+    align-items: start;
+
+    padding: 28px 16px 10px; /* more top breathing */
+    column-gap: 12px;
+    row-gap: 4px;
+  }
+
+  /* --- LEFT SIDE TITLE --- */
+  .film-logo{
+    grid-column: 1;
+    grid-row: 2;
+
+    justify-self: start;
+    text-align: left;
+
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    line-height: 1.2;
+    opacity: 0.85;
+
+    margin: 0;
+  }
+
+  /* --- RIGHT COLUMN STACK --- */
+
+  /* 1 — TIMECODE */
+  .timecode{
+    grid-column: 2;
+    grid-row: 1;
+
+    justify-self: end;
+    text-align: right;
+
+    font-size: 0.60rem;
+    letter-spacing: 0.12em;
+    opacity: 0.65;
+
+    margin-top: 6px; /* pushes whole stack down slightly */
+  }
+
+  /* 2 — FRAGMENTS */
+  #fragmentCounter{
+    grid-column: 2;
+    grid-row: 2;
+
+    justify-self: end;
+    text-align: right;
+
+    font-size: 0.58rem;
+    letter-spacing: 0.10em;
+    opacity: 0.75;
+  }
+
+  /* 3 — LAST OPENED */
+  #lastOpenedLine{
+    grid-column: 2;
+    grid-row: 3;
+
+    justify-self: end;
+    text-align: right;
+
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+    opacity: 0.55;
+
+    max-width: 200px;
+    white-space: normal;
+  }
+}
