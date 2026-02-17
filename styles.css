@@ -100,11 +100,45 @@ body::after{
   align-items:center;
   justify-content:center;
   transition:opacity 1.35s ease;
-  background:rgba(10,10,10,0.92); /* keeps the opening separate */
+  overflow: hidden;
+  background:none
 }
 .opening-door.hidden{ opacity:0; pointer-events:none; }
 
-.opening-content{ text-align:center; padding:2rem; }
+/* video wrapper behind the text */
+.opening-bg{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* make it fill screen */
+.opening-bg-video{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.85) contrast(1.05) saturate(1.1);
+  transform: scale(1.02); 
+}
+
+/* extra darkness + cinematic vignette */
+.opening-bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at center, rgba(86, 86, 86, 0.15) 0%, rgba(0,0,0,0.75) 100%),
+    rgba(104, 104, 104, 0.35);
+}
+
+/* keep text on top */
+.opening-content{
+  position: relative;
+  z-index: 1;
+  text-align:center; 
+  padding:2rem;
+}
 
 .opening-title{
   font-family:"Ballet";
@@ -113,6 +147,7 @@ body::after{
   letter-spacing:0.03em;
   opacity:0;
   animation:fadeIn 2.1s ease-out forwards;
+  text-shadow:0 4px 18px rgba(0, 0, 0, 0.75);
 }
 .opening-subtitle{
   margin-top:1rem;
@@ -123,6 +158,7 @@ body::after{
   color:rgba(248,248,248,0.35);
   opacity:0;
   animation:fadeIn 2.1s ease-out 0.55s forwards;
+  text-shadow:0 4px 18px rgba(0, 0, 0, 0.75);
 }
 .opening-prompt{
   margin-top:7rem;
@@ -132,6 +168,7 @@ body::after{
   color:rgba(248,248,248,0.55);
   opacity:0;
   animation:fadeIn 2.1s ease-out 1.45s forwards, pulse 2.4s ease-in-out 3.1s infinite;
+  text-shadow:0 4px 18px rgba(0, 0, 0, 0.75);
 }
 @keyframes fadeIn{ to{ opacity:1; } }
 @keyframes pulse{ 0%,100%{opacity:1} 50%{opacity:.42} }
@@ -468,7 +505,7 @@ body::after{
   font-size:0.75rem;
   letter-spacing:0.05em;
   line-height:1.8;
-  color:rgba(255, 255, 255, 0.35);
+  color:rgba(255, 255, 255, 0.408);
   opacity:1;
 }
 
@@ -476,6 +513,12 @@ body::after{
    RESPONSIVE
    ========================= */
 @media (max-width: 900px){
+
+  .opening-title{
+    font-size:clamp(3.4rem, 9vw, 5.2rem);
+    line-height: 1;
+    margin-bottom: 5.5rem;
+  }
 
    .shotlist{
     display:block;
@@ -612,5 +655,65 @@ body::after{
 
 .shot[data-shot="7"] .shot-text{
     transform: translateY(52px) !important; 
+  }
+}
+
+/* =========================
+   EXTRA SMALL MOBILE (iPhone SE) — END CARD ONLY
+   ========================= */
+@media (max-width: 400px), (max-height: 700px){
+
+  /* END CARD */
+  .endcard{
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+
+    padding: max(58px, 7vh) 70px 38px 48px;
+
+    gap: 10px;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .end-title{
+    font-size: clamp(2.15rem, 9.2vw, 3.0rem);
+    line-height: 1.05;
+    margin: 0;              /* remove any big pushes */
+    letter-spacing: 0.02em;
+  }
+
+  .end-body{
+    width: 100%;
+    max-width: 520px;
+
+    /* scroll the body text if needed on short screens */
+    max-height: 42dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    /* keep a tiny inner gutter */
+    padding-right: 6px;
+
+    /* slightly tighter so it fits */
+    font-size: clamp(0.76rem, 2.7vw, 0.7rem);
+    line-height: 1.85;
+  }
+
+  .end-body p{ margin-bottom: 0.95rem; }
+
+  .begin-again{
+    margin-top: 6px;
+    font-size: 1.2rem;
+  }
+
+  .end-credits{
+    margin-top: 10px;
+    font-size: 0.58rem;
+    line-height: 1.55;
   }
 }
