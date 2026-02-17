@@ -266,11 +266,13 @@ function init() {
 init();
 
 // =============================
-// SCROLL NAV
+// SCROLL / SWIPE NAV (WORKS ON REAL iPHONES)
 // =============================
-let wheelLocked = false;
-let wheelEndTimer = null;
-const WHEEL_END_MS = 180;
+
+function isInFilmMode() {
+  // Only navigate shots AFTER enter the film
+  return openingScreen && openingScreen.classList.contains("hidden");
+}
 
 function closestScrollable(el) {
   while (el && el !== document.body) {
@@ -284,65 +286,118 @@ function closestScrollable(el) {
   return null;
 }
 
-function onWheelAdvance(e) {
-  if (!openingScreen.classList.contains("hidden")) return;
+function canScrollInDirection(scroller, direction /* 1=down, -1=up */) {
+  if (!scroller) return false;
+  const top = scroller.scrollTop;
+  const maxTop = scroller.scrollHeight - scroller.clientHeight;
+  if (direction > 0) return top < maxTop - 1;
+  return top > 1;
+}
+
+/* ---------- DESKTOP WHEEL (1 shot per gesture) ---------- */
+let wheelLocked = false;
+let wheelEndTimer = null;
+const WHEEL_END_MS = 140;
+
+function onWheelNav(e) {
+  // IMPORTANT: if not in film mode, do NOT block normal scrolling
+  if (!isInFilmMode()) return;
   if (performance.now() < blockAdvanceUntil) return;
 
-  // If the user is trying to scroll inside a scrollable box (like .end-body),
-  // let that scroll naturally.
+  // If user is scrolling inside a scrollable box (end card body), allow it
   const scroller = closestScrollable(e.target);
   if (scroller) return;
 
+  // navigate shots → block page scroll
   e.preventDefault();
 
-  // gesture-end timer unlock
   clearTimeout(wheelEndTimer);
   wheelEndTimer = setTimeout(() => (wheelLocked = false), WHEEL_END_MS);
 
-  // one advance per gesture
   if (wheelLocked) return;
 
   const dy = e.deltaY || 0;
-  if (Math.abs(dy) < 0.5) return;
+  if (Math.abs(dy) < 3) return;
 
   wheelLocked = true;
   if (dy > 0) nextShot();
   else previousShot();
 }
 
-// Capture=true makes sure we catch the wheel early (trackpad-friendly)
-document.addEventListener("wheel", onWheelAdvance, { passive: false, capture: true });
+// attach once
+document.addEventListener("wheel", onWheelNav, { passive: false });
 
-// =============================
-// MOBILE SCROLL NAV
-// =============================
+/* ---------- MOBILE SWIPE (vertical) ---------- */
+let touchStartX = 0;
+let touchStartY = 0;
+let touchScroller = null;
+let touchMoved = false;
+let touchNavLocked = false;
 
-let wheelAcc = 0;
-let wheelLockUntil = 0;
+const SWIPE_MIN_Y = 45;
+const SWIPE_MAX_X = 70;
+const NAV_LOCK_MS = 220;
 
-function onWheelAdvance(e) {
-  if (!openingScreen.classList.contains("hidden")) return;
-  if (performance.now() < blockAdvanceUntil) return;
+document.addEventListener(
+  "touchstart",
+  (e) => {
+    if (!isInFilmMode()) return;
+    if (performance.now() < blockAdvanceUntil) return;
 
-  e.preventDefault();
+    const t = e.touches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+    touchMoved = false;
 
-  if (performance.now() < wheelLockUntil) return;
+    touchScroller = closestScrollable(e.target);
+  },
+  { passive: true }
+);
 
-  // accumulate small deltas
-  wheelAcc += e.deltaY;
+document.addEventListener(
+  "touchmove",
+  (e) => {
+    if (!isInFilmMode()) return;
+    if (performance.now() < blockAdvanceUntil) return;
 
-  // require enough movement before triggering
-  const THRESH = 80;
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
 
-  if (wheelAcc > THRESH) {
-    wheelAcc = 0;
-    wheelLockUntil = performance.now() + 420;
-    nextShot();
-  } else if (wheelAcc < -THRESH) {
-    wheelAcc = 0;
-    wheelLockUntil = performance.now() + 420;
-    previousShot();
-  }
-}
+    // ignore mostly horizontal
+    if (Math.abs(dx) > Math.abs(dy)) return;
 
-window.addEventListener("wheel", onWheelAdvance, { passive: false });
+    // If started inside a scrollable element and it can scroll in that direction, allow normal scroll
+    const direction = dy < 0 ? 1 : -1;
+    if (touchScroller && canScrollInDirection(touchScroller, direction)) return;
+
+    // Otherwise: prevent page scroll so swipe can navigate shots
+    touchMoved = true;
+    e.preventDefault();
+  },
+  { passive: false } // REQUIRED on iOS for preventDefault to work
+);
+
+document.addEventListener(
+  "touchend",
+  (e) => {
+    if (!isInFilmMode()) return;
+    if (performance.now() < blockAdvanceUntil) return;
+    if (!touchMoved) return;
+    if (touchNavLocked) return;
+
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+
+    if (Math.abs(dy) < SWIPE_MIN_Y) return;
+    if (Math.abs(dx) > SWIPE_MAX_X) return;
+
+    touchNavLocked = true;
+    setTimeout(() => (touchNavLocked = false), NAV_LOCK_MS);
+
+    if (dy < 0) nextShot();
+    else previousShot();
+  },
+  { passive: true }
+);
