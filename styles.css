@@ -509,62 +509,48 @@ body::after{
   opacity:1;
 }
 
-
-html { -webkit-text-size-adjust: 100%; } /* stops iOS auto-resizing text */
-body { overscroll-behavior: none; }     
-
-:root{
-  --safeL: max(var(--safeX), env(safe-area-inset-left));
-  --safeR: max(var(--safeX), env(safe-area-inset-right));
-  --safeT: max(var(--safeTop), env(safe-area-inset-top));
-  --safeB: max(var(--safeBottom), env(safe-area-inset-bottom));
-  --railW: 92px;
-}
-
 /* =========================
-   RESPONSIVE (MOBILE)
+   RESPONSIVE
    ========================= */
 @media (max-width: 900px){
 
   .opening-title{
-    font-size: clamp(3.4rem, 9vw, 5.2rem);
+    font-size:clamp(3.4rem, 9vw, 5.2rem);
     line-height: 1;
     margin-bottom: 5.5rem;
   }
 
-  /* keep your shotlist behavior */
-  .shotlist{
+   .shotlist{
     display:block;
-    position: fixed;
-    right: 0.75rem;                 /* mobile tighter than desktop */
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 35;
-    text-align: right;
-    user-select: none;
+    right:0.75rem;
+    top:50%;
+    transform:translateY(-50%);
+    z-index:35;
   }
 
+  /* smaller + easier to tap */
   .shotnum{
-    font-size: 0.6rem;
-    padding: 0.3rem 0.3rem;
-    opacity: 0.75;
+    font-size:0.6rem;
+    padding:0.3rem 0.3rem;
+    opacity:0.75;
     touch-action: manipulation;
     line-height: 0.5;
   }
 
   .shotlist-label{
-    font-size: 0.6rem;
-    margin-bottom: 0.25rem;
-    opacity: 0.75;
+    font-size:0.6rem;
+    margin-bottom:0.25rem;
+    opacity:0.75;
   }
 
+  /* existing mobile text layout */
   .film-logo{
     font-size: 0.7rem;
     margin-top: 0.8rem;
   }
 
-  .film-ui{ padding: 1rem 1.1rem; }
-  .shot-info{ left: 1.1rem; top: 4.9rem; }
+  .film-ui{ padding:1rem 1.1rem; }
+  .shot-info{ left:1.1rem; top:4.9rem; }
 
   .shot-title{
     font-size: clamp(1.8rem, 5.8vw, 2.2rem);
@@ -577,28 +563,28 @@ body { overscroll-behavior: none; }
     line-height: 1.5;
   }
 
-  /* =========================
-     KEY FIX: reserve the shotlist rail on the RIGHT
-     so text never touches it on real iPhones
-     ========================= */
+/* ALL shot text boxes stay inside the viewport */
   .shot-text{
-    left: var(--safeL) !important;
-    right: var(--safeR) !important;
-
-    /* reserve space for the right-side shotlist */
-    padding-right: calc(var(--railW) + 10px) !important;
-
+    /* hard bounds */
+    left: 25px !important;     
+    right: 48px !important;   
     max-width: none !important;
     width: auto !important;
-
+    transform: none !important;
+  
+    /* keep it readable and wrap */
+    max-width: none !important;
+    width: auto !important;
     word-break: normal;
     overflow-wrap: anywhere;
 
+    /* prevent transform pushes from center/right positions */
     transform: none !important;
+
+    /* don't let it exceed the box */
     box-sizing: border-box;
   }
 
-  /* Neutralize all “pos-” layouts on mobile */
   .shot-text.pos-bottom-left,
   .shot-text.pos-bottom-right,
   .shot-text.pos-top-left,
@@ -608,86 +594,76 @@ body { overscroll-behavior: none; }
   .shot-text.pos-right-center,
   .shot-text.pos-top-center,
   .shot-text.pos-bottom-center{
-    left: var(--safeL);
-    right: var(--safeR);
-
-    /* reserve shotlist space here too */
-    padding-right: calc(var(--railW) + 10px);
-
-    top: auto;
-    bottom: var(--safeB);
+    left: var(--safeX);
+    right: var(--safeX);
+    top:auto;
+    bottom: var(--safeBottom);
     text-align: left;
     transform: none;
   }
 
-  /* END CARD (mobile) — safe-area aware + reserves shotlist rail */
   .endcard{
-    position: absolute;
-    inset: 0;
+  position:absolute;
+  inset:0;
 
-    display: grid;
-    grid-template-rows: auto auto auto auto;
-    justify-items: center;
+  display:grid;
+  grid-template-rows: auto auto auto auto;
+  justify-items:center;
 
-    /* this is the big real-phone fix */
-    align-content: center;
+  align-content:center;
 
-    padding-top: var(--safeT);
-    padding-right: var(--safeR);
-    padding-bottom: var(--safeB);
-    padding-left: var(--safeL);
+  padding-top: max(92px, 20vh);
+  padding-right: 50px;
+  padding-bottom: 24px;
+  padding-left: 36px;
 
-    /* reserve the shotlist rail so it never overlaps the end text */
-    padding-inline-end: calc(var(--safeR) + var(--railW));
-
-    gap: 14px;
-    overflow: hidden;
-    text-align: center;
-  }
-
-  .end-title{
-    font-size: clamp(3rem, 8vw, 4rem);
-    line-height: 1.05;
-    margin: 0;
-  }
-
-  .end-body{
-    width: 100%;
-    max-width: 520px;
-
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-
-    font-size: clamp(0.82rem, 2.6vw, 0.95rem);
-    line-height: 1.9;
-
-    max-height: 44dvh;
-    padding-right: 4px;
-  }
-
-  .begin-again{
-    margin-top: 20px;
-    font-size: 1.4rem;
-  }
-
-  .end-credits{
-    margin-top: 120px;
-    font-size: 0.6rem;
-    line-height: 1.6;
-  }
-
-  /* your per-shot tweak */
-  .shot[data-shot="7"] .shot-text{
-    transform: translateY(52px) !important;
-  }
+  gap: 14px;
+  overflow:hidden;
+  text-align:center;
 }
 
+.end-title{
+  font-size: clamp(3rem, 8vw, 4rem);
+  line-height: 1.05;
+  margin: 0; 
+}
+
+.end-body{
+  width:100%;
+  max-width:520px;
+
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+
+  font-size: clamp(0.82rem, 2.6vw, 0.95rem);
+  line-height:1.9;
+
+  max-height:44dvh;
+  padding-right:4px;
+}
+
+.begin-again{
+  margin-top: 20px;
+  font-size:1.4rem;
+}
+
+.end-credits{
+  margin-top:90px;
+  font-size:0.6rem;
+  line-height:1.6;
+}
+
+.shot[data-shot="7"] .shot-text{
+    transform: translateY(52px) !important; 
+  }
+}
 
 /* =========================
    EXTRA SMALL MOBILE (iPhone SE) — END CARD ONLY
    ========================= */
 @media (max-width: 400px), (max-height: 700px){
 
+  /* END CARD */
   .endcard{
     position: absolute;
     inset: 0;
@@ -697,11 +673,7 @@ body { overscroll-behavior: none; }
     align-items: center;
     justify-content: flex-end;
 
-    /* safe-area aware + reserves shotlist */
-    padding-top: var(--safeT);
-    padding-right: calc(var(--safeR) + var(--railW));
-    padding-bottom: var(--safeB);
-    padding-left: var(--safeL);
+    padding: max(58px, 7vh) 70px 38px 48px;
 
     gap: 10px;
     overflow: hidden;
@@ -711,7 +683,7 @@ body { overscroll-behavior: none; }
   .end-title{
     font-size: clamp(2.15rem, 9.2vw, 3.0rem);
     line-height: 1.05;
-    margin: 0;
+    margin: 0;              /* remove any big pushes */
     letter-spacing: 0.02em;
   }
 
@@ -719,13 +691,16 @@ body { overscroll-behavior: none; }
     width: 100%;
     max-width: 520px;
 
+    /* scroll the body text if needed on short screens */
     max-height: 42dvh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 
+    /* keep a tiny inner gutter */
     padding-right: 6px;
 
-    font-size: clamp(0.76rem, 2.7vw, 0.86rem);
+    /* slightly tighter so it fits */
+    font-size: clamp(0.76rem, 2.7vw, 0.7rem);
     line-height: 1.85;
   }
 
