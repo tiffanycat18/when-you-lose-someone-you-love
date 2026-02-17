@@ -197,6 +197,7 @@ body::after{
 }
 .timecode{
   font-family:var(--mono);
+  margin-top: 0.8rem;
   font-size:0.72rem;
   letter-spacing:0.12em;
   color:rgba(248,248,248,0.28);
@@ -508,6 +509,7 @@ body::after{
   line-height:1.8;
   color:rgba(255, 255, 255, 0.408);
   opacity:1;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
 }
 
 /* =========================
