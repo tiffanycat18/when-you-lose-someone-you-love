@@ -512,6 +512,9 @@ body::after{
 /* =========================
    RESPONSIVE
    ========================= */
+html { -webkit-text-size-adjust: 100%; } /* stops iOS auto-resizing text */
+body { overscroll-behavior: none; } 
+
 @media (max-width: 900px){
 
   .opening-title{
