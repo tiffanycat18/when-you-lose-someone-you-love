@@ -646,6 +646,7 @@ body { overscroll-behavior: none; }
 .begin-again{
   margin-top: 20px;
   font-size:1.4rem;
+  color:rgba(255, 255, 255, 1);
 }
 
 .end-credits{
@@ -710,6 +711,7 @@ body { overscroll-behavior: none; }
   .begin-again{
     margin-top: 6px;
     font-size: 1.2rem;
+    color:rgba(255, 255, 255, 1);
   }
 
   .end-credits{
