@@ -266,7 +266,7 @@ function init() {
 init();
 
 // =============================
-// SCROLL NAV (ONE SHOT PER GESTURE)
+// SCROLL NAV
 // =============================
 let wheelLocked = false;
 let wheelEndTimer = null;
@@ -312,3 +312,37 @@ function onWheelAdvance(e) {
 
 // Capture=true makes sure we catch the wheel early (trackpad-friendly)
 document.addEventListener("wheel", onWheelAdvance, { passive: false, capture: true });
+
+// =============================
+// MOBILE SCROLL NAV
+// =============================
+
+let wheelAcc = 0;
+let wheelLockUntil = 0;
+
+function onWheelAdvance(e) {
+  if (!openingScreen.classList.contains("hidden")) return;
+  if (performance.now() < blockAdvanceUntil) return;
+
+  e.preventDefault();
+
+  if (performance.now() < wheelLockUntil) return;
+
+  // accumulate small deltas
+  wheelAcc += e.deltaY;
+
+  // require enough movement before triggering
+  const THRESH = 80;
+
+  if (wheelAcc > THRESH) {
+    wheelAcc = 0;
+    wheelLockUntil = performance.now() + 420;
+    nextShot();
+  } else if (wheelAcc < -THRESH) {
+    wheelAcc = 0;
+    wheelLockUntil = performance.now() + 420;
+    previousShot();
+  }
+}
+
+window.addEventListener("wheel", onWheelAdvance, { passive: false });
