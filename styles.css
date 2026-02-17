@@ -220,6 +220,7 @@ body::after{
   z-index:35;
   text-align:right;
   user-select:none;
+  padding-right: 10px;
 }
 .shotlist-label{
   font-family:var(--mono);
@@ -235,6 +236,7 @@ body::after{
   align-items:flex-end;
 }
 .shotnum{
+  position: relative;
   font-family:var(--mono);
   font-size:0.72rem;
   letter-spacing:0.10em;
@@ -511,6 +513,202 @@ body::after{
   opacity:1;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
 }
+
+/* =========================
+   ARCHIVE STATE (visited / unvisited / locked)
+   ========================= */
+.shotnum.visited{
+  opacity: 0.55; 
+}
+
+.shotnum.unvisited{
+  opacity: 1;
+  animation: shotPulse 2.4s ease-in-out infinite;
+  text-shadow: 0 0 10px rgba(255,255,255,0.22);
+}
+
+.shotnum.locked{
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+@keyframes shotPulse{
+  0%, 100%{ opacity: 0.95; }
+  50%{ opacity: 0.42; }
+}
+
+/* =========================
+   ARCHIVE UI (shotlist states)
+   ========================= */
+
+   
+/* active = bright white */
+
+/* visited = small dot */
+.shotnum.visited::after{
+  content:"";
+  position:absolute;
+  right:-10px;              /* dot sits to the right of the number */
+  top:50%;
+  width:4px;
+  height:4px;
+  border-radius:999px;
+  background: rgba(255,255,255,0.55);
+  transform: translateY(-50%);
+}
+
+.shotnum.active.visited::after{
+  background: rgba(255,255,255,0.95);
+}
+
+/* unvisited = warm amber pulse */
+.shotnum.unvisited{
+  opacity: 1;
+  color: rgba(255,255,255,0.92);
+  text-shadow: 0 0 10px rgba(255, 189, 120, 0.22);
+  animation: amberPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes amberPulse{
+  0%,100%{ text-shadow: 0 0 10px rgba(255,189,120,0.18); opacity: .95; }
+  50%{ text-shadow: 0 0 18px rgba(255,189,120,0.32); opacity: .55; }
+}
+
+/* =========================
+   "NEW FRAGMENT" badge (doesn't change layout)
+   ========================= */
+.new-fragment-badge{
+  position:absolute;
+  left:0;
+  top:-18px;
+  z-index:30;
+  font-family: var(--mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 214, 160, 0.92);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .45s ease, transform .45s ease;
+  pointer-events:none;
+}
+
+.shot.active .new-fragment-badge.show{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* =========================
+   Collection flash (warm radial pulse)
+   ========================= */
+.collection-flash{
+  position: fixed;
+  inset: 0;
+  z-index: 58; /* under grain (60) but above video/text */
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at center,
+    rgba(255, 190, 130, 0.22) 0%,
+    rgba(255, 190, 130, 0.08) 22%,
+    rgba(0,0,0,0) 60%
+  );
+  transform: scale(0.98);
+}
+
+.collection-flash.fire{
+  animation: collectPulse 900ms cubic-bezier(0.45,0,0.2,1) 1;
+}
+
+@keyframes collectPulse{
+  0%{ opacity: 0; transform: scale(0.98); }
+  25%{ opacity: 1; transform: scale(1); }
+  100%{ opacity: 0; transform: scale(1.02); }
+}
+
+/* =========================
+   Fragment counter (top-right)
+   ========================= */
+.fragment-counter{
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: rgba(248,248,248,0.35);
+  margin-top: 0.35rem;
+}
+
+/* =========================
+   Opening archive lines 
+   ========================= */
+.opening-meta{
+  margin-top: 1rem;
+  font-family: "PP Editorial New Ultralight";
+  font-size: 0.95rem;
+  letter-spacing: 0.10em;
+  color: rgba(248,248,248,0.38);
+  text-shadow: 0 4px 18px rgba(0,0,0,0.75);
+}
+
+/* =========================
+   End card lock overlay (blur + pips + button)
+   ========================= */
+.end-lock{
+  position:absolute;
+  inset:0;
+  z-index: 50;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding: 10vh 8vw 8vh;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(0,0,0,0.35);
+}
+
+.end-lock-title{
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 1rem;
+}
+
+.end-lock-pips{
+  display:flex;
+  gap: 8px;
+  margin-bottom: 1.3rem;
+}
+
+.end-lock-pip{
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.08);
+}
+
+.end-lock-pip.filled{
+  background: rgba(255, 214, 160, 0.55);
+  border-color: rgba(255, 214, 160, 0.65);
+  box-shadow: 0 0 10px rgba(255, 189, 120, 0.18);
+}
+
+.keep-wandering{
+  font-family: "Ballet";
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.6rem;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.55);
+  opacity: 0.9;
+  transition: opacity .35s ease;
+}
+.keep-wandering:hover{ opacity: 1; }
+
+
 
 /* =========================
    RESPONSIVE
