@@ -814,12 +814,12 @@ body { overscroll-behavior: none; }
   grid-template-rows: auto auto auto auto;
   justify-content: flex-end;
 
-  align-content:center;
+  align-content: start;
 
   padding-top: max(92px, 20vh);
-  padding-right: 50px;
+  padding-right: 70px;
   padding-bottom: 34px;
-  padding-left: 30px;
+  padding-left: 10px;
 
   gap: 20px;
   overflow:hidden;
@@ -830,13 +830,12 @@ body { overscroll-behavior: none; }
   font-size: clamp(3rem, 8vw, 4rem);
   line-height: 1.05;
   margin: 0; 
-  padding-right:4px;
-  max-width:360px;
+  max-width:300px;
 }
 
 .end-body{
   width:100%;
-  max-width:260px;
+  max-width:300px;
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
   font-size: clamp(0.82rem, 2.6vw, 0.95rem);
