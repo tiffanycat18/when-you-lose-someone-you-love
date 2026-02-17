@@ -634,15 +634,13 @@ body { overscroll-behavior: none; }
 .end-body{
   width:100%;
   max-width:520px;
-
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
-
   font-size: clamp(0.82rem, 2.6vw, 0.95rem);
   line-height:1.9;
-
   max-height:44dvh;
   padding-right:4px;
+  margin-top: 20px;
 }
 
 .begin-again{
