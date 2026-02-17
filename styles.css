@@ -643,11 +643,11 @@ body { overscroll-behavior: none; }
   line-height:1.9;
   max-height:44dvh;
   padding-right:4px;
-  margin-top: 40px;
+  margin-top: 60px;
 }
 
 .begin-again{
-  margin-top: 20px;
+  margin-top: 40px;
   font-size:1.4rem;
   color:rgba(255, 255, 255, 1);
 }
