@@ -998,9 +998,9 @@ body { overscroll-behavior: none; }
     justify-self: start;
     text-align: left;
 
-    font-size: 0.6rem;
+    font-size: 0.65rem;
     letter-spacing: 0.12em;
-    line-height: 1.2;
+    line-height: 2;
     opacity: 0.85;
     max-width: 120px;
 
