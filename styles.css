@@ -945,7 +945,7 @@ body { overscroll-behavior: none; }
   /* --- LEFT SIDE TITLE --- */
   .film-logo{
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 2 / span 10; 
 
     justify-self: start;
     text-align: left;
