@@ -10,75 +10,71 @@ let currentShotIndex = 0;
 let blockAdvanceUntil = 0;
 
 // =============================
-// MUSIC  (ONLY CHANGES ARE HERE)
+// MUSIC
 // =============================
+
 const bgMusic = document.getElementById("bgMusic");
 const musicToggle = document.getElementById("musicToggle");
 
-let audioPrimed = false;
+let musicStarted = false;
 
-async function primeAudioOnce() {
-  // iOS/Safari needs an unlocked audio context from a user gesture.
-  if (!bgMusic || audioPrimed) return;
-  audioPrimed = true;
-
+// iOS/Safari unlock helper: briefly play muted, then stop, then allow real play
+async function primeAudio() {
+  if (!bgMusic) return;
   try {
-    const wasMuted = bgMusic.muted;
-    const prevVol = bgMusic.volume;
-
     bgMusic.muted = true;
-    bgMusic.volume = 0;
     await bgMusic.play();
     bgMusic.pause();
     bgMusic.currentTime = 0;
-
-    bgMusic.muted = wasMuted;
-    bgMusic.volume = prevVol || 0.35;
-  } catch {
-    // If it fails, we'll try again on next user gesture.
-    audioPrimed = false;
-  }
+    bgMusic.muted = false;
+  } catch {}
 }
 
-async function playMusic() {
+async function startMusicIfAllowed() {
   if (!bgMusic) return;
 
   try {
+    bgMusic.volume = 0.35; // adjust to taste
     bgMusic.loop = true;
-    if (Number.isFinite(bgMusic.volume) === false) bgMusic.volume = 0.35;
-    // if user paused it earlier, don't restart from the beginning
+
+    // helps iOS/Safari
+    if (!musicStarted) await primeAudio();
+
     await bgMusic.play();
+    musicStarted = true;
+
     if (musicToggle) musicToggle.classList.remove("is-paused");
   } catch (e) {
-    // blocked until a user gesture
-    if (musicToggle) musicToggle.classList.add("is-paused");
     console.warn("Music play blocked:", e);
+    if (musicToggle) musicToggle.classList.add("is-paused");
   }
 }
 
-function pauseMusic() {
-  if (!bgMusic) return;
-  bgMusic.pause();
-  if (musicToggle) musicToggle.classList.add("is-paused");
-}
-
-async function toggleMusic(e) {
+function toggleMusic(e) {
   if (e) e.stopPropagation();
   if (!bgMusic) return;
 
-  // Make sure we prime on the SAME user gesture
-  await primeAudioOnce();
-
   if (bgMusic.paused) {
-    await playMusic();
+    startMusicIfAllowed(); // play (or resume)
   } else {
-    pauseMusic();
+    bgMusic.pause(); // pause
+    if (musicToggle) musicToggle.classList.add("is-paused");
   }
 }
 
 if (musicToggle) {
   musicToggle.addEventListener("click", toggleMusic);
 }
+
+// Backup: first user gesture anywhere unlocks audio (doesn't change UX)
+document.addEventListener(
+  "pointerdown",
+  () => {
+    startMusicIfAllowed();
+  },
+  { once: true }
+);
+
 // -----------------------------
 // ARCHIVE STATE (PERSISTENCE)
 // -----------------------------
@@ -95,9 +91,10 @@ function loadArchive() {
     const parsed = JSON.parse(raw);
     if (parsed && Array.isArray(parsed.visited)) {
       archive.visited = parsed.visited
-        .map(n => parseInt(n, 10))
-        .filter(n => Number.isFinite(n));
-      archive.lastShot = parsed.lastShot != null ? parseInt(parsed.lastShot, 10) : null;
+        .map((n) => parseInt(n, 10))
+        .filter((n) => Number.isFinite(n));
+      archive.lastShot =
+        parsed.lastShot != null ? parseInt(parsed.lastShot, 10) : null;
     }
   } catch {}
 }
@@ -110,7 +107,9 @@ function saveArchive() {
 
 function clearArchive() {
   archive = { visited: [], lastShot: null };
-  try { localStorage.removeItem(ARCHIVE_KEY); } catch {}
+  try {
+    localStorage.removeItem(ARCHIVE_KEY);
+  } catch {}
 }
 
 function getShotNumberByIndex(i) {
@@ -118,7 +117,7 @@ function getShotNumberByIndex(i) {
 }
 
 function getIndexByShotNumber(n) {
-  return shots.findIndex(s => parseInt(s.dataset.shot, 10) === n);
+  return shots.findIndex((s) => parseInt(s.dataset.shot, 10) === n);
 }
 
 function isVisited(n) {
@@ -127,7 +126,7 @@ function isVisited(n) {
 
 function visitedCount() {
   // count only fragments 1–10
-  return archive.visited.filter(n => n >= 1 && n <= TOTAL_FRAGMENTS).length;
+  return archive.visited.filter((n) => n >= 1 && n <= TOTAL_FRAGMENTS).length;
 }
 
 function allFragmentsFound() {
@@ -148,9 +147,11 @@ function markVisited(n) {
 function pickRandomStartIndex() {
   const nonEnd = shots
     .map((s, i) => ({ i, n: parseInt(s.dataset.shot, 10) }))
-    .filter(x => x.n !== END_SHOT_NUMBER);
+    .filter((x) => x.n !== END_SHOT_NUMBER);
 
-  const unvisited = nonEnd.filter(x => x.n >= 1 && x.n <= TOTAL_FRAGMENTS && !isVisited(x.n));
+  const unvisited = nonEnd.filter(
+    (x) => x.n >= 1 && x.n <= TOTAL_FRAGMENTS && !isVisited(x.n)
+  );
   const pool = unvisited.length ? unvisited : nonEnd;
 
   const chosen = pool[Math.floor(Math.random() * pool.length)];
@@ -165,13 +166,13 @@ function pickRandomFragmentIndex({ preferUnvisited = true, preferVisited = false
 
   const candidates = shots
     .map((s, i) => ({ i, n: parseInt(s.dataset.shot, 10) }))
-    .filter(x => x.n >= 1 && x.n <= TOTAL_FRAGMENTS)
-    .filter(x => x.n !== currentN); // never pick the same fragment
+    .filter((x) => x.n >= 1 && x.n <= TOTAL_FRAGMENTS)
+    .filter((x) => x.n !== currentN); // never pick the same fragment
 
   if (!candidates.length) return currentShotIndex;
 
-  const unvisited = candidates.filter(x => !isVisited(x.n));
-  const visited = candidates.filter(x => isVisited(x.n));
+  const unvisited = candidates.filter((x) => !isVisited(x.n));
+  const visited = candidates.filter((x) => isVisited(x.n));
 
   let pool = candidates;
   if (preferUnvisited && unvisited.length) pool = unvisited;
@@ -182,7 +183,7 @@ function pickRandomFragmentIndex({ preferUnvisited = true, preferVisited = false
 }
 
 // -----------------------------
-// SMALL UI ELEMENTS WE INJECT (no HTML changes)
+// SMALL UI ELEMENTS (no HTML changes)
 // -----------------------------
 let fragmentCounterEl = null;
 let lastOpenedEl = null;
@@ -268,7 +269,9 @@ async function playActiveShotVideo() {
   const v = activeShot.querySelector("video.shot-film");
   if (!v) return;
 
-  try { v.currentTime = 0; } catch {}
+  try {
+    v.currentTime = 0;
+  } catch {}
   v.load();
 
   await Promise.resolve();
@@ -353,6 +356,13 @@ function startTimecodeForCurrentShot() {
 }
 
 // -----------------------------
+// ENDING DEAD-END helper
+// -----------------------------
+function isEndingShotActive() {
+  return getShotNumberByIndex(currentShotIndex) === END_SHOT_NUMBER;
+}
+
+// -----------------------------
 // Shot numbers (right side)
 // -----------------------------
 function buildShotNumbers() {
@@ -371,6 +381,10 @@ function buildShotNumbers() {
 
     num.addEventListener("click", (e) => {
       e.stopPropagation();
+
+      // DEAD END: no shotlist jumps once you're on shot 11
+      if (isEndingShotActive()) return;
+
       showShot(i);
     });
 
@@ -382,8 +396,9 @@ function buildShotNumbers() {
 
 function updateShotNumbersUI() {
   if (shotCounterUI) {
-    shotCounterUI.textContent =
-      `${String(currentShotIndex + 1).padStart(2, "0")} / ${String(shots.length).padStart(2, "0")}`;
+    shotCounterUI.textContent = `${String(currentShotIndex + 1).padStart(2, "0")} / ${String(
+      shots.length
+    ).padStart(2, "0")}`;
   }
 
   updateFragmentCounter();
@@ -506,7 +521,7 @@ function showShot(index) {
   const n = getShotNumberByIndex(currentShotIndex);
 
   // Determine if new fragment BEFORE marking visited
-  const isNewFragment = (n >= 1 && n <= TOTAL_FRAGMENTS && !isVisited(n));
+  const isNewFragment = n >= 1 && n <= TOTAL_FRAGMENTS && !isVisited(n);
 
   // persist
   markVisited(n);
@@ -525,6 +540,9 @@ function showShot(index) {
 // RANDOMIZED NAV (scroll/click/keys use these)
 // -----------------------------
 function nextShot() {
+  // ✅ DEAD END: no next from ending
+  if (isEndingShotActive()) return;
+
   // If everything is collected, NEXT should take you to the ending (shot 11)
   if (allFragmentsFound()) {
     const endIndex = getIndexByShotNumber(END_SHOT_NUMBER);
@@ -534,7 +552,6 @@ function nextShot() {
       showShot(endIndex);
       return;
     }
-    // If you're already on the ending and keep scrolling, keep wandering randomly
   }
 
   // Otherwise: always random jump (prefer unvisited)
@@ -543,6 +560,9 @@ function nextShot() {
 }
 
 function previousShot() {
+  // DEAD END: no previous from ending
+  if (isEndingShotActive()) return;
+
   // Random jump (prefer visited so it feels like “back through memory”)
   const prev = pickRandomFragmentIndex({ preferUnvisited: false, preferVisited: true });
   showShot(prev);
@@ -554,8 +574,8 @@ function previousShot() {
 function enterFilm(e) {
   if (e) e.stopPropagation();
 
-  // Prime + start music on the SAME user gesture that enters (safe for iOS)
-  primeAudioOnce().then(playMusic);
+  // Start music on user gesture
+  startMusicIfAllowed();
 
   ensureInjectedUI();
 
@@ -568,7 +588,7 @@ function enterFilm(e) {
   openingScreen.classList.add("hidden");
 
   const n = getShotNumberByIndex(currentShotIndex);
-  const isNewFragment = (n >= 1 && n <= TOTAL_FRAGMENTS && !isVisited(n));
+  const isNewFragment = n >= 1 && n <= TOTAL_FRAGMENTS && !isVisited(n);
   markVisited(n);
 
   if (isNewFragment) fireCollectionFlash();
@@ -606,6 +626,9 @@ document.addEventListener("click", (e) => {
   if (!openingScreen.classList.contains("hidden")) return;
   if (performance.now() < blockAdvanceUntil) return;
 
+  // ✅ DEAD END: no click-to-advance on ending
+  if (isEndingShotActive()) return;
+
   if (e.target.closest("#shotlist")) return;
   if (e.target.closest("#beginAgain")) return;
   if (e.target.closest("#musicToggle")) return;
@@ -617,12 +640,15 @@ document.addEventListener("keydown", (e) => {
   if (!openingScreen.classList.contains("hidden")) return;
   if (performance.now() < blockAdvanceUntil) return;
 
+  // ✅ DEAD END: no keys on ending
+  if (isEndingShotActive()) return;
+
   if (e.key === "ArrowRight" || e.key === " ") {
     e.preventDefault();
-    nextShot(); // random (or ending when complete)
+    nextShot();
   } else if (e.key === "ArrowLeft") {
     e.preventDefault();
-    previousShot(); // random
+    previousShot();
   }
 });
 
@@ -692,6 +718,9 @@ function onWheelNav(e) {
   if (!isInFilmMode()) return;
   if (performance.now() < blockAdvanceUntil) return;
 
+  // ✅ DEAD END: no wheel nav on ending
+  if (isEndingShotActive()) return;
+
   const scroller = closestScrollable(e.target);
   if (scroller) return;
 
@@ -706,8 +735,8 @@ function onWheelNav(e) {
   if (Math.abs(dy) < 3) return;
 
   wheelLocked = true;
-  if (dy > 0) nextShot();       // random (or ending when complete)
-  else previousShot();          // random
+  if (dy > 0) nextShot();
+  else previousShot();
 }
 
 document.addEventListener("wheel", onWheelNav, { passive: false });
@@ -723,50 +752,72 @@ const SWIPE_MIN_Y = 45;
 const SWIPE_MAX_X = 70;
 const NAV_LOCK_MS = 220;
 
-document.addEventListener("touchstart", (e) => {
-  if (!isInFilmMode()) return;
-  if (performance.now() < blockAdvanceUntil) return;
+document.addEventListener(
+  "touchstart",
+  (e) => {
+    if (!isInFilmMode()) return;
+    if (performance.now() < blockAdvanceUntil) return;
 
-  const t = e.touches[0];
-  touchStartX = t.clientX;
-  touchStartY = t.clientY;
-  touchMoved = false;
-  touchScroller = closestScrollable(e.target);
-}, { passive: true });
+    // ✅ DEAD END: no swipe start on ending
+    if (isEndingShotActive()) return;
 
-document.addEventListener("touchmove", (e) => {
-  if (!isInFilmMode()) return;
-  if (performance.now() < blockAdvanceUntil) return;
+    const t = e.touches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+    touchMoved = false;
+    touchScroller = closestScrollable(e.target);
+  },
+  { passive: true }
+);
 
-  const t = e.touches[0];
-  const dx = t.clientX - touchStartX;
-  const dy = t.clientY - touchStartY;
+document.addEventListener(
+  "touchmove",
+  (e) => {
+    if (!isInFilmMode()) return;
+    if (performance.now() < blockAdvanceUntil) return;
 
-  if (Math.abs(dx) > Math.abs(dy)) return;
+    // DEAD END: no swipe move on ending
+    if (isEndingShotActive()) return;
 
-  const direction = dy < 0 ? 1 : -1;
-  if (touchScroller && canScrollInDirection(touchScroller, direction)) return;
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
 
-  touchMoved = true;
-  e.preventDefault();
-}, { passive: false });
+    if (Math.abs(dx) > Math.abs(dy)) return;
 
-document.addEventListener("touchend", (e) => {
-  if (!isInFilmMode()) return;
-  if (performance.now() < blockAdvanceUntil) return;
-  if (!touchMoved) return;
-  if (touchNavLocked) return;
+    const direction = dy < 0 ? 1 : -1;
+    if (touchScroller && canScrollInDirection(touchScroller, direction)) return;
 
-  const t = e.changedTouches[0];
-  const dx = t.clientX - touchStartX;
-  const dy = t.clientY - touchStartY;
+    touchMoved = true;
+    e.preventDefault();
+  },
+  { passive: false }
+);
 
-  if (Math.abs(dy) < SWIPE_MIN_Y) return;
-  if (Math.abs(dx) > SWIPE_MAX_X) return;
+document.addEventListener(
+  "touchend",
+  (e) => {
+    if (!isInFilmMode()) return;
+    if (performance.now() < blockAdvanceUntil) return;
 
-  touchNavLocked = true;
-  setTimeout(() => (touchNavLocked = false), NAV_LOCK_MS);
+    // ✅ DEAD END: no swipe end on ending
+    if (isEndingShotActive()) return;
 
-  if (dy < 0) nextShot();       // random (or ending when complete)
-  else previousShot();          // random
-}, { passive: true });
+    if (!touchMoved) return;
+    if (touchNavLocked) return;
+
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+
+    if (Math.abs(dy) < SWIPE_MIN_Y) return;
+    if (Math.abs(dx) > SWIPE_MAX_X) return;
+
+    touchNavLocked = true;
+    setTimeout(() => (touchNavLocked = false), NAV_LOCK_MS);
+
+    if (dy < 0) nextShot();
+    else previousShot();
+  },
+  { passive: true }
+);
