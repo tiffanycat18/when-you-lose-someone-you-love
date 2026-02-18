@@ -44,7 +44,8 @@ async function startMusicIfAllowed() {
     musicStarted = true;
     if (musicToggle) musicToggle.classList.remove("is-paused");
   } catch (e) {
-    if (musicToggle) musicToggle.classList.add("is-paused");
+  console.warn("Music play blocked:", e);
+  if (musicToggle) musicToggle.classList.add("is-paused");
   }
 }
 
@@ -599,8 +600,9 @@ document.addEventListener("click", (e) => {
 
   if (e.target.closest("#shotlist")) return;
   if (e.target.closest("#beginAgain")) return;
+  if (e.target.closest("#musicToggle")) return; 
 
-  nextShot(); // random (or ending when complete)
+  nextShot();
 });
 
 document.addEventListener("keydown", (e) => {
