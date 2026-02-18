@@ -10,43 +10,103 @@ let currentShotIndex = 0;
 let blockAdvanceUntil = 0;
 
 // =============================
-// MUSIC
+// MUSIC (playlist + random loop) 
 // =============================
-
 const bgMusic = document.getElementById("bgMusic");
 const musicToggle = document.getElementById("musicToggle");
 
-let musicStarted = false;
+const PLAYLIST = [
+  "audio/GABRIEL.mp3",
+  "audio/ANGEL.mp3",
+  "audio/UNDERSTAND.mp3",
+];
 
-// iOS/Safari unlock helper: briefly play muted, then stop, then allow real play
+let musicInitialized = false;
+let lastTrackIndex = -1;
+
+function pickRandomTrackIndex() {
+  if (PLAYLIST.length <= 1) return 0;
+  let idx = Math.floor(Math.random() * PLAYLIST.length);
+  if (idx === lastTrackIndex) idx = (idx + 1) % PLAYLIST.length; // no immediate repeat
+  return idx;
+}
+
+function setTrackByIndex(idx) {
+  if (!bgMusic) return;
+  lastTrackIndex = idx;
+
+  // IMPORTANT: set src only (NO load())
+  bgMusic.src = PLAYLIST[idx];
+
+  // (optional) restart track at the beginning
+  try { bgMusic.currentTime = 0; } catch {}
+}
+
+// iOS/Safari unlock helper (must be called AFTER src exists)
 async function primeAudio() {
   if (!bgMusic) return;
   try {
+    const wasMuted = bgMusic.muted;
     bgMusic.muted = true;
     await bgMusic.play();
     bgMusic.pause();
-    bgMusic.currentTime = 0;
-    bgMusic.muted = false;
+    try { bgMusic.currentTime = 0; } catch {}
+    bgMusic.muted = wasMuted;
   } catch {}
+}
+
+function setToggleUIPaused(isPaused) {
+  if (!musicToggle) return;
+  musicToggle.classList.toggle("is-paused", isPaused);
 }
 
 async function startMusicIfAllowed() {
   if (!bgMusic) return;
 
   try {
-    bgMusic.volume = 0.35; // adjust to taste
-    bgMusic.loop = true;
+    bgMusic.volume = 0.35;
+    bgMusic.loop = false;      // we handle looping manually
+    bgMusic.preload = "auto";
 
-    // helps iOS/Safari
-    if (!musicStarted) await primeAudio();
+    // Init once
+    if (!musicInitialized) {
+      // ✅ pick a track FIRST so primeAudio has a real src
+      if (!bgMusic.src) setTrackByIndex(pickRandomTrackIndex());
+
+      // ✅ now unlock
+      await primeAudio();
+
+      // when a song ends → pick another random → play again forever
+      bgMusic.addEventListener("ended", async () => {
+        // if user paused, don’t auto-advance
+        if (bgMusic.paused) return;
+
+        setTrackByIndex(pickRandomTrackIndex());
+        try {
+          await bgMusic.play();
+          setToggleUIPaused(false);
+        } catch {
+          setToggleUIPaused(true);
+        }
+      });
+
+      // helpful if path is wrong
+      bgMusic.addEventListener("error", () => {
+        console.warn("Audio failed to load:", bgMusic.src);
+        setToggleUIPaused(true);
+      });
+
+      musicInitialized = true;
+    }
+
+    // If no src for some reason, set one
+    if (!bgMusic.src) setTrackByIndex(pickRandomTrackIndex());
 
     await bgMusic.play();
-    musicStarted = true;
-
-    if (musicToggle) musicToggle.classList.remove("is-paused");
+    setToggleUIPaused(false);
   } catch (e) {
     console.warn("Music play blocked:", e);
-    if (musicToggle) musicToggle.classList.add("is-paused");
+    setToggleUIPaused(true);
   }
 }
 
@@ -55,10 +115,10 @@ function toggleMusic(e) {
   if (!bgMusic) return;
 
   if (bgMusic.paused) {
-    startMusicIfAllowed(); // play (or resume)
+    startMusicIfAllowed();     // play
   } else {
-    bgMusic.pause(); // pause
-    if (musicToggle) musicToggle.classList.add("is-paused");
+    bgMusic.pause();           // pause
+    setToggleUIPaused(true);
   }
 }
 
@@ -66,14 +126,23 @@ if (musicToggle) {
   musicToggle.addEventListener("click", toggleMusic);
 }
 
-// Backup: first user gesture anywhere unlocks audio (doesn't change UX)
-document.addEventListener(
-  "pointerdown",
-  () => {
-    startMusicIfAllowed();
-  },
-  { once: true }
-);
+function stopAndResetMusic() {
+  if (!bgMusic) return;
+
+  bgMusic.pause();
+  try { bgMusic.currentTime = 0; } catch {}
+
+  // reset playlist state so next enter starts fresh
+  musicInitialized = false;
+  lastTrackIndex = -1;
+
+  // optional: clear src so it truly “starts over”
+  bgMusic.removeAttribute("src");
+  // (don’t call load() — we’re avoiding AbortError)
+  
+  setToggleUIPaused(true);
+}
+
 
 // -----------------------------
 // ARCHIVE STATE (PERSISTENCE)
@@ -626,7 +695,7 @@ document.addEventListener("click", (e) => {
   if (!openingScreen.classList.contains("hidden")) return;
   if (performance.now() < blockAdvanceUntil) return;
 
-  // ✅ DEAD END: no click-to-advance on ending
+  // DEAD END: no click-to-advance on ending
   if (isEndingShotActive()) return;
 
   if (e.target.closest("#shotlist")) return;
@@ -640,7 +709,7 @@ document.addEventListener("keydown", (e) => {
   if (!openingScreen.classList.contains("hidden")) return;
   if (performance.now() < blockAdvanceUntil) return;
 
-  // ✅ DEAD END: no keys on ending
+  // DEAD END: no keys on ending
   if (isEndingShotActive()) return;
 
   if (e.key === "ArrowRight" || e.key === " ") {
@@ -655,6 +724,8 @@ document.addEventListener("keydown", (e) => {
 if (beginAgainButton) {
   beginAgainButton.addEventListener("click", (e) => {
     e.stopPropagation();
+
+    stopAndResetMusic();
 
     // RESET EVERYTHING on Begin Again
     clearArchive();
@@ -718,7 +789,7 @@ function onWheelNav(e) {
   if (!isInFilmMode()) return;
   if (performance.now() < blockAdvanceUntil) return;
 
-  // ✅ DEAD END: no wheel nav on ending
+  // DEAD END: no wheel nav on ending
   if (isEndingShotActive()) return;
 
   const scroller = closestScrollable(e.target);
@@ -758,7 +829,7 @@ document.addEventListener(
     if (!isInFilmMode()) return;
     if (performance.now() < blockAdvanceUntil) return;
 
-    // ✅ DEAD END: no swipe start on ending
+    // DEAD END: no swipe start on ending
     if (isEndingShotActive()) return;
 
     const t = e.touches[0];
@@ -800,7 +871,7 @@ document.addEventListener(
     if (!isInFilmMode()) return;
     if (performance.now() < blockAdvanceUntil) return;
 
-    // ✅ DEAD END: no swipe end on ending
+    // DEAD END: no swipe end on ending
     if (isEndingShotActive()) return;
 
     if (!touchMoved) return;
