@@ -403,7 +403,7 @@ body::after{
 .shot[data-textpos="bottom-left"]  .shot-text{ left:3rem;  bottom:4vh; top:auto; right:auto; transform:none; text-align:left; }
 .shot[data-textpos="bottom-right"] .shot-text{ right:3rem; bottom:4vh; top:auto; left:auto; transform:none; text-align:right; }
 .shot[data-textpos="top-left"]     .shot-text{ left:3rem;  top:22vh; bottom:auto; right:auto; transform:none; text-align:left; }
-.shot[data-textpos="top-right"]    .shot-text{ right:3rem; top:23vh; bottom:auto; left:auto; transform:none; text-align:right; }
+.shot[data-textpos="top-right"]    .shot-text{ right:8rem; top:23vh; bottom:auto; left:auto; transform:none; text-align:right; }
 
 .shot[data-textpos="center"] .shot-text{
   left:50%;
@@ -427,17 +427,17 @@ body::after{
 
 .shot[data-textpos="right-center"] .shot-text{
   right:10rem;
-  top:40%;
+  top:60%;
   bottom:auto;
   left:auto;
   transform:translateY(-50%);
   text-align:right;
-  max-width:520px;
+  max-width:600px;
 }
 
 .shot[data-textpos="top-center"] .shot-text{
   left:50%;
-  top:12vh;
+  top:19vh;
   bottom:auto;
   right:auto;
   transform:translateX(-50%);
@@ -805,6 +805,9 @@ body { overscroll-behavior: none; }
     text-align: left;
     transform: none;
   }
+
+  .shot[data-textpos="top-right"]    .shot-text{ right:8rem; top:23vh; bottom:auto; left:auto; transform:none; text-align:left; }
+  .shot[data-textpos="bottom-right"] .shot-text{ right:3rem; bottom:4vh; top:auto; left:auto; transform:none; text-align:left; }
 
   .endcard{
   position:absolute;
