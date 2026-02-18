@@ -10,7 +10,7 @@ let currentShotIndex = 0;
 let blockAdvanceUntil = 0;
 
 // =============================
-// MUSIC (playlist + random loop) 
+// MUSIC (playlist + random loop)
 // =============================
 const bgMusic = document.getElementById("bgMusic");
 const musicToggle = document.getElementById("musicToggle");
@@ -23,6 +23,13 @@ const PLAYLIST = [
 
 let musicInitialized = false;
 let lastTrackIndex = -1;
+
+// NEW: this is the ONLY thing we trust for “should we continue playlist?”
+let userPausedMusic = true;
+
+// store handler refs so reset can remove them (prevents duplicate listeners)
+let onMusicEnded = null;
+let onMusicError = null;
 
 function pickRandomTrackIndex() {
   if (PLAYLIST.length <= 1) return 0;
@@ -38,8 +45,24 @@ function setTrackByIndex(idx) {
   // IMPORTANT: set src only (NO load())
   bgMusic.src = PLAYLIST[idx];
 
-  // (optional) restart track at the beginning
+  // restart at beginning
   try { bgMusic.currentTime = 0; } catch {}
+}
+
+function waitForCanPlay(el) {
+  return new Promise((resolve) => {
+    if (!el) return resolve();
+    if (el.readyState >= 2) return resolve(); // HAVE_CURRENT_DATA
+
+    const done = () => {
+      el.removeEventListener("canplay", done);
+      el.removeEventListener("loadeddata", done);
+      resolve();
+    };
+
+    el.addEventListener("canplay", done, { once: true });
+    el.addEventListener("loadeddata", done, { once: true });
+  });
 }
 
 // iOS/Safari unlock helper (must be called AFTER src exists)
@@ -60,6 +83,50 @@ function setToggleUIPaused(isPaused) {
   musicToggle.classList.toggle("is-paused", isPaused);
 }
 
+async function playCurrentTrack() {
+  if (!bgMusic) return;
+  await waitForCanPlay(bgMusic);
+  await bgMusic.play();
+}
+
+function attachMusicListenersOnce() {
+  if (!bgMusic || musicInitialized) return;
+
+  onMusicEnded = async () => {
+    // IMPORTANT: don't check bgMusic.paused here (it is TRUE when a song ends)
+    if (userPausedMusic) return;
+
+    setTrackByIndex(pickRandomTrackIndex());
+    try {
+      await playCurrentTrack();
+      setToggleUIPaused(false);
+    } catch {
+      // if blocked, reflect paused
+      setToggleUIPaused(true);
+      userPausedMusic = true;
+    }
+  };
+
+  onMusicError = () => {
+    console.warn("Audio failed to load:", bgMusic.src);
+    setToggleUIPaused(true);
+    userPausedMusic = true;
+  };
+
+  bgMusic.addEventListener("ended", onMusicEnded);
+  bgMusic.addEventListener("error", onMusicError);
+
+  musicInitialized = true;
+}
+
+function detachMusicListeners() {
+  if (!bgMusic) return;
+  if (onMusicEnded) bgMusic.removeEventListener("ended", onMusicEnded);
+  if (onMusicError) bgMusic.removeEventListener("error", onMusicError);
+  onMusicEnded = null;
+  onMusicError = null;
+}
+
 async function startMusicIfAllowed() {
   if (!bgMusic) return;
 
@@ -68,45 +135,22 @@ async function startMusicIfAllowed() {
     bgMusic.loop = false;      // we handle looping manually
     bgMusic.preload = "auto";
 
-    // Init once
-    if (!musicInitialized) {
-      // ✅ pick a track FIRST so primeAudio has a real src
-      if (!bgMusic.src) setTrackByIndex(pickRandomTrackIndex());
-
-      // ✅ now unlock
-      await primeAudio();
-
-      // when a song ends → pick another random → play again forever
-      bgMusic.addEventListener("ended", async () => {
-        // if user paused, don’t auto-advance
-        if (bgMusic.paused) return;
-
-        setTrackByIndex(pickRandomTrackIndex());
-        try {
-          await bgMusic.play();
-          setToggleUIPaused(false);
-        } catch {
-          setToggleUIPaused(true);
-        }
-      });
-
-      // helpful if path is wrong
-      bgMusic.addEventListener("error", () => {
-        console.warn("Audio failed to load:", bgMusic.src);
-        setToggleUIPaused(true);
-      });
-
-      musicInitialized = true;
-    }
-
-    // If no src for some reason, set one
+    // pick a track FIRST so primeAudio has a real src
     if (!bgMusic.src) setTrackByIndex(pickRandomTrackIndex());
 
-    await bgMusic.play();
+    // init once (and only once)
+    if (!musicInitialized) {
+      await primeAudio();
+      attachMusicListenersOnce();
+    }
+
+    userPausedMusic = false;
+    await playCurrentTrack();
     setToggleUIPaused(false);
   } catch (e) {
     console.warn("Music play blocked:", e);
     setToggleUIPaused(true);
+    userPausedMusic = true;
   }
 }
 
@@ -115,9 +159,13 @@ function toggleMusic(e) {
   if (!bgMusic) return;
 
   if (bgMusic.paused) {
-    startMusicIfAllowed();     // play
+    // play
+    userPausedMusic = false;
+    startMusicIfAllowed();
   } else {
-    bgMusic.pause();           // pause
+    // pause
+    userPausedMusic = true;
+    bgMusic.pause();
     setToggleUIPaused(true);
   }
 }
@@ -129,8 +177,12 @@ if (musicToggle) {
 function stopAndResetMusic() {
   if (!bgMusic) return;
 
+  userPausedMusic = true;
   bgMusic.pause();
   try { bgMusic.currentTime = 0; } catch {}
+
+  // remove playlist listeners so re-enter doesn't stack them
+  detachMusicListeners();
 
   // reset playlist state so next enter starts fresh
   musicInitialized = false;
@@ -138,8 +190,8 @@ function stopAndResetMusic() {
 
   // optional: clear src so it truly “starts over”
   bgMusic.removeAttribute("src");
-  // (don’t call load() — we’re avoiding AbortError)
-  
+  // (don’t call load() — avoiding AbortError)
+
   setToggleUIPaused(true);
 }
 
