@@ -993,7 +993,7 @@ body { overscroll-behavior: none; }
   /* --- LEFT SIDE TITLE --- */
   .film-logo{
     grid-column: 1;
-    grid-row: 3; 
+    grid-row: 2 / span 2; /* spans rows 2 and 3 */
 
     justify-self: start;
     text-align: left;
