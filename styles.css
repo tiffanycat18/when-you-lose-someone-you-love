@@ -194,6 +194,7 @@ body::after{
   letter-spacing:0.18em;
   text-transform:uppercase;
   color:rgba(255, 255, 255, 0.8);
+  margin-top: 0.35rem;
 }
 .timecode{
   font-family:var(--mono);
@@ -575,7 +576,7 @@ body::after{
 }
 
 /* =========================
-   "NEW FRAGMENT" badge (doesn't change layout)
+   "NEW FRAGMENT" badge 
    ========================= */
 .new-fragment-badge{
   position:absolute;
