@@ -401,7 +401,7 @@ body::after{
 
 /* positions */
 .shot[data-textpos="bottom-left"]  .shot-text{ left:3rem;  bottom:4vh; top:auto; right:auto; transform:none; text-align:left; }
-.shot[data-textpos="bottom-right"] .shot-text{ right:3rem; bottom:4vh; top:auto; left:auto; transform:none; text-align:right; }
+.shot[data-textpos="bottom-right"] .shot-text{ right:3rem; bottom:8vh; top:auto; left:auto; transform:none; text-align:right; }
 .shot[data-textpos="top-left"]     .shot-text{ left:3rem;  top:22vh; bottom:auto; right:auto; transform:none; text-align:left; }
 .shot[data-textpos="top-right"]    .shot-text{ right:8rem; top:23vh; bottom:auto; left:auto; transform:none; text-align:right; }
 

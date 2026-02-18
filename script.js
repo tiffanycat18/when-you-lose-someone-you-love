@@ -9,10 +9,26 @@ const shotCounterUI = document.getElementById("shotCount");
 let currentShotIndex = 0;
 let blockAdvanceUntil = 0;
 
+// =============================
+// MUSIC 
+// =============================
+
 const bgMusic = document.getElementById("bgMusic");
 const musicToggle = document.getElementById("musicToggle");
 
 let musicStarted = false;
+
+// iOS/Safari unlock helper: briefly play muted, then stop, then allow real play
+async function primeAudio() {
+  if (!bgMusic) return;
+  try {
+    bgMusic.muted = true;
+    await bgMusic.play();
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+    bgMusic.muted = false;
+  } catch {}
+}
 
 async function startMusicIfAllowed() {
   if (!bgMusic || musicStarted) return;
@@ -20,6 +36,10 @@ async function startMusicIfAllowed() {
   try {
     bgMusic.volume = 0.35;     // adjust to taste
     bgMusic.loop = true;
+
+    // helps iOS/Safari
+    await primeAudio();
+
     await bgMusic.play();      // will succeed after user interaction
     musicStarted = true;
     if (musicToggle) musicToggle.classList.remove("is-paused");
@@ -44,6 +64,11 @@ function toggleMusic(e) {
 if (musicToggle) {
   musicToggle.addEventListener("click", toggleMusic);
 }
+
+// Backup: first user gesture anywhere unlocks audio (doesn't change UX)
+document.addEventListener("pointerdown", () => {
+  startMusicIfAllowed();
+}, { once: true });
 
 // -----------------------------
 // ARCHIVE STATE (PERSISTENCE)
@@ -520,6 +545,7 @@ function previousShot() {
 function enterFilm(e) {
   if (e) e.stopPropagation();
 
+  // Start music on user gesture
   startMusicIfAllowed();
 
   ensureInjectedUI();
