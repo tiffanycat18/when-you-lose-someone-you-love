@@ -975,7 +975,7 @@ body { overscroll-behavior: none; }
     letter-spacing: 0.12em;
     line-height: 1.2;
     opacity: 0.85;
-    max-width: 150px;
+    max-width: 120px;
 
     margin: 0;
   }
