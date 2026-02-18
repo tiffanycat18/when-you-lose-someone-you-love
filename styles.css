@@ -1000,7 +1000,7 @@ body { overscroll-behavior: none; }
 
     font-size: 0.65rem;
     letter-spacing: 0.12em;
-    line-height: 2;
+    line-height: 1.5;
     opacity: 0.85;
     max-width: 120px;
 
