@@ -823,12 +823,11 @@ body { overscroll-behavior: none; }
 
   display:grid;
   grid-template-rows: auto auto auto auto;
-  justify-content: flex-end;
+  justify-content: center;
 
   align-content: center;
 
   padding-top: max(92px, 20vh);
-  padding-right: 60px;
   padding-bottom: 34px;
 
   gap: 20px;
