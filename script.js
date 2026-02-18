@@ -9,6 +9,42 @@ const shotCounterUI = document.getElementById("shotCount");
 let currentShotIndex = 0;
 let blockAdvanceUntil = 0;
 
+const bgMusic = document.getElementById("bgMusic");
+const musicToggle = document.getElementById("musicToggle");
+
+let musicStarted = false;
+
+async function startMusicIfAllowed() {
+  if (!bgMusic || musicStarted) return;
+
+  try {
+    bgMusic.volume = 0.35;     // adjust to taste
+    bgMusic.loop = true;
+    await bgMusic.play();      // will succeed after user interaction
+    musicStarted = true;
+    if (musicToggle) musicToggle.classList.remove("is-paused");
+  } catch (e) {
+    if (musicToggle) musicToggle.classList.add("is-paused");
+  }
+}
+
+function toggleMusic(e) {
+  if (e) e.stopPropagation();
+  if (!bgMusic) return;
+
+  // If it hasn't started yet, try to start it
+  if (bgMusic.paused) {
+    startMusicIfAllowed();
+  } else {
+    bgMusic.pause();
+    if (musicToggle) musicToggle.classList.add("is-paused");
+  }
+}
+
+if (musicToggle) {
+  musicToggle.addEventListener("click", toggleMusic);
+}
+
 // -----------------------------
 // ARCHIVE STATE (PERSISTENCE)
 // -----------------------------
@@ -483,6 +519,8 @@ function previousShot() {
 // -----------------------------
 function enterFilm(e) {
   if (e) e.stopPropagation();
+
+  startMusicIfAllowed();
 
   ensureInjectedUI();
 
