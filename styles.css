@@ -820,7 +820,7 @@ body { overscroll-behavior: none; }
   align-content: start;
 
   padding-top: max(92px, 20vh);
-  padding-right: 70px;
+  padding-right: 60px;
   padding-bottom: 34px;
   padding-left: 10px;
 
@@ -834,6 +834,7 @@ body { overscroll-behavior: none; }
   line-height: 1.05;
   margin: 0; 
   max-width:300px;
+  padding-top: 20px;
 }
 
 .end-body{
