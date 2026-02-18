@@ -10,67 +10,75 @@ let currentShotIndex = 0;
 let blockAdvanceUntil = 0;
 
 // =============================
-// MUSIC 
+// MUSIC  (ONLY CHANGES ARE HERE)
 // =============================
-
 const bgMusic = document.getElementById("bgMusic");
 const musicToggle = document.getElementById("musicToggle");
 
-let musicStarted = false;
+let audioPrimed = false;
 
-// iOS/Safari unlock helper: briefly play muted, then stop, then allow real play
-async function primeAudio() {
-  if (!bgMusic) return;
+async function primeAudioOnce() {
+  // iOS/Safari needs an unlocked audio context from a user gesture.
+  if (!bgMusic || audioPrimed) return;
+  audioPrimed = true;
+
   try {
+    const wasMuted = bgMusic.muted;
+    const prevVol = bgMusic.volume;
+
     bgMusic.muted = true;
+    bgMusic.volume = 0;
     await bgMusic.play();
     bgMusic.pause();
     bgMusic.currentTime = 0;
-    bgMusic.muted = false;
-  } catch {}
-}
 
-async function startMusicIfAllowed() {
-  if (!bgMusic || musicStarted) return;
-
-  try {
-    bgMusic.volume = 0.35;     // adjust to taste
-    bgMusic.loop = true;
-
-    // helps iOS/Safari
-    await primeAudio();
-
-    await bgMusic.play();      // will succeed after user interaction
-    musicStarted = true;
-    if (musicToggle) musicToggle.classList.remove("is-paused");
-  } catch (e) {
-  console.warn("Music play blocked:", e);
-  if (musicToggle) musicToggle.classList.add("is-paused");
+    bgMusic.muted = wasMuted;
+    bgMusic.volume = prevVol || 0.35;
+  } catch {
+    // If it fails, we'll try again on next user gesture.
+    audioPrimed = false;
   }
 }
 
-function toggleMusic(e) {
+async function playMusic() {
+  if (!bgMusic) return;
+
+  try {
+    bgMusic.loop = true;
+    if (Number.isFinite(bgMusic.volume) === false) bgMusic.volume = 0.35;
+    // if user paused it earlier, don't restart from the beginning
+    await bgMusic.play();
+    if (musicToggle) musicToggle.classList.remove("is-paused");
+  } catch (e) {
+    // blocked until a user gesture
+    if (musicToggle) musicToggle.classList.add("is-paused");
+    console.warn("Music play blocked:", e);
+  }
+}
+
+function pauseMusic() {
+  if (!bgMusic) return;
+  bgMusic.pause();
+  if (musicToggle) musicToggle.classList.add("is-paused");
+}
+
+async function toggleMusic(e) {
   if (e) e.stopPropagation();
   if (!bgMusic) return;
 
-  // If it hasn't started yet, try to start it
+  // Make sure we prime on the SAME user gesture
+  await primeAudioOnce();
+
   if (bgMusic.paused) {
-    startMusicIfAllowed();
+    await playMusic();
   } else {
-    bgMusic.pause();
-    if (musicToggle) musicToggle.classList.add("is-paused");
+    pauseMusic();
   }
 }
 
 if (musicToggle) {
   musicToggle.addEventListener("click", toggleMusic);
 }
-
-// Backup: first user gesture anywhere unlocks audio (doesn't change UX)
-document.addEventListener("pointerdown", () => {
-  startMusicIfAllowed();
-}, { once: true });
-
 // -----------------------------
 // ARCHIVE STATE (PERSISTENCE)
 // -----------------------------
@@ -546,8 +554,8 @@ function previousShot() {
 function enterFilm(e) {
   if (e) e.stopPropagation();
 
-  // Start music on user gesture
-  startMusicIfAllowed();
+  // Prime + start music on the SAME user gesture that enters (safe for iOS)
+  primeAudioOnce().then(playMusic);
 
   ensureInjectedUI();
 
@@ -600,7 +608,7 @@ document.addEventListener("click", (e) => {
 
   if (e.target.closest("#shotlist")) return;
   if (e.target.closest("#beginAgain")) return;
-  if (e.target.closest("#musicToggle")) return; 
+  if (e.target.closest("#musicToggle")) return;
 
   nextShot();
 });
