@@ -966,7 +966,7 @@ body { overscroll-behavior: none; }
   /* --- LEFT SIDE TITLE --- */
   .film-logo{
     grid-column: 1;
-    grid-row: 2 / span 10; 
+    grid-row: 3; 
 
     justify-self: start;
     text-align: left;
@@ -985,7 +985,7 @@ body { overscroll-behavior: none; }
   /* 1 — TIMECODE */
   .timecode{
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 3;
 
     justify-self: end;
     text-align: right;
