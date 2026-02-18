@@ -403,7 +403,7 @@ body::after{
 .shot[data-textpos="bottom-left"]  .shot-text{ left:3rem;  bottom:4vh; top:auto; right:auto; transform:none; text-align:left; }
 .shot[data-textpos="bottom-right"] .shot-text{ right:3rem; bottom:4vh; top:auto; left:auto; transform:none; text-align:right; }
 .shot[data-textpos="top-left"]     .shot-text{ left:3rem;  top:22vh; bottom:auto; right:auto; transform:none; text-align:left; }
-.shot[data-textpos="top-right"]    .shot-text{ right:3rem; top:17vh; bottom:auto; left:auto; transform:none; text-align:right; }
+.shot[data-textpos="top-right"]    .shot-text{ right:3rem; top:23vh; bottom:auto; left:auto; transform:none; text-align:right; }
 
 .shot[data-textpos="center"] .shot-text{
   left:50%;
@@ -771,7 +771,7 @@ body { overscroll-behavior: none; }
   .shot-text{
     /* hard bounds */
     left: 25px !important;     
-    right: 48px !important;   
+    right: 65px !important;   
     max-width: none !important;
     width: auto !important;
     transform: none !important;
@@ -934,7 +934,7 @@ body { overscroll-behavior: none; }
     grid-template-rows: auto auto auto;
     align-items: start;
 
-    padding: 28px 16px 10px; /* more top breathing */
+    padding: 28px 16px 10px;
     column-gap: 12px;
     row-gap: 4px;
   }
@@ -947,10 +947,11 @@ body { overscroll-behavior: none; }
     justify-self: start;
     text-align: left;
 
-    font-size: 0.65rem;
-    letter-spacing: 0.14em;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
     line-height: 1.2;
     opacity: 0.85;
+    max-width: 150px;
 
     margin: 0;
   }
@@ -960,14 +961,14 @@ body { overscroll-behavior: none; }
   /* 1 — TIMECODE */
   .timecode{
     grid-column: 2;
-    grid-row: 1;
+    grid-row: 2;
 
     justify-self: end;
     text-align: right;
 
-    font-size: 0.60rem;
+    font-size: 0.7rem;
     letter-spacing: 0.12em;
-    opacity: 0.65;
+    opacity: 0.85;
 
     margin-top: 6px; /* pushes whole stack down slightly */
   }
@@ -975,29 +976,31 @@ body { overscroll-behavior: none; }
   /* 2 — FRAGMENTS */
   #fragmentCounter{
     grid-column: 2;
-    grid-row: 2;
+    grid-row: 6;
 
     justify-self: end;
     text-align: right;
 
-    font-size: 0.58rem;
+    font-size: 0.68rem;
     letter-spacing: 0.10em;
-    opacity: 0.75;
+    opacity: 0.95;
+    color: rgb(219, 219, 219);
   }
 
   /* 3 — LAST OPENED */
   #lastOpenedLine{
     grid-column: 2;
-    grid-row: 3;
+    grid-row: 7;
 
     justify-self: end;
     text-align: right;
 
-    font-size: 0.55rem;
+    font-size: 0.65rem;
     letter-spacing: 0.08em;
-    opacity: 0.55;
+    opacity: 0.75;
 
     max-width: 200px;
     white-space: normal;
+    color: rgb(219, 219, 219);
   }
 }
