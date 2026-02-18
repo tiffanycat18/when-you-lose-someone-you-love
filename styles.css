@@ -874,6 +874,12 @@ body { overscroll-behavior: none; }
   }
 }
 
+ .shot[data-shot="11"].active ~ .shotlist,
+  body:has(.shot[data-shot="11"].active) .shotlist{
+    opacity: 0;
+    pointer-events: none;
+  }
+
 /* =========================
    EXTRA SMALL MOBILE (iPhone SE) — END CARD ONLY
    ========================= */
@@ -932,6 +938,12 @@ body { overscroll-behavior: none; }
     margin-top: 10px;
     font-size: 0.58rem;
     line-height: 1.55;
+  }
+
+   .shot[data-shot="11"].active ~ .shotlist,
+  body:has(.shot[data-shot="11"].active) .shotlist{
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
