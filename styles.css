@@ -808,7 +808,15 @@ body { overscroll-behavior: none; }
 
   .shot[data-textpos="top-right"]    .shot-text{ right:8rem; top:23vh; bottom:auto; left:auto; transform:none; text-align:left; }
   .shot[data-textpos="bottom-right"] .shot-text{ right:3rem; bottom:4vh; top:auto; left:auto; transform:none; text-align:left; }
-
+  .shot[data-textpos="right-center"] .shot-text{
+  right:10rem;
+  top:60%;
+  bottom:auto;
+  left:auto;
+  transform:translateY(-50%);
+  text-align:left;
+  max-width:600px;
+}
   .endcard{
   position:absolute;
   inset:0;
